@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+        a { text-decoration: none; color: inherit; }
+
+    
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .top-header .greeting h1 { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+        .top-header .greeting h1 span { color: #0F2A5F; }
+        .top-header .greeting p { font-size: 14px; color: #6b7280; margin-top: 4px; }
+        .top-header .right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .top-header .right .date { font-size: 14px; color: #6b7280; }
+        .top-header .right .notif {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .top-header .right .notif:hover { background: #e5e7eb; }
+        .top-header .right .notif .dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+        }
+        .top-header .right .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 12px 4px 4px;
+            border-radius: 30px;
+            background: #f3f4f6;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .top-header .right .profile:hover { background: #e5e7eb; }
+        .top-header .right .profile .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #0F2A5F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .top-header .right .profile .info .name { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+        .top-header .right .profile .info .role { font-size: 11px; color: #6b7280; }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px 24px;
+            transition: 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: #0F2A5F; box-shadow: 0 8px 25px rgba(15,42,95,0.08); }
+        .stat-card .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-card .top .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .stat-card .top .icon.blue { background: rgba(15,42,95,0.10); color: #0F2A5F; }
+        .stat-card .top .icon.green { background: rgba(16,185,129,0.10); color: #10b981; }
+        .stat-card .top .icon.orange { background: rgba(245,158,11,0.10); color: #f59e0b; }
+        .stat-card .top .icon.pink { background: rgba(239,68,68,0.10); color: #ef4444; }
+        .stat-card .top .icon.purple { background: rgba(139,92,246,0.10); color: #8b5cf6; }
+        .stat-card .top .change {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+        .stat-card .top .change.up { background: rgba(16,185,129,0.10); color: #10b981; }
+        .stat-card .top .change.down { background: rgba(239,68,68,0.10); color: #ef4444; }
+        .stat-card .number { font-size: 28px; font-weight: 800; color: #1a1a2e; margin: 10px 0 2px; }
+        .stat-card .label { font-size: 14px; color: #6b7280; }
+        .stat-card .sub { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+
+       
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .card .card-header h3 { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+        .card .card-header a { font-size: 13px; color: #0F2A5F; font-weight: 500; }
+
+      
+        .content-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        /* ===== CHART ===== */
+        .chart-container {
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding-top: 10px;
+        }
+        .chart-bar {
+            flex: 1;
+            border-radius: 6px 6px 0 0;
+            min-height: 16px;
+            transition: 0.3s;
+            position: relative;
+        }
+        .chart-bar:hover { opacity: 0.8; }
+        .chart-bar .label {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #6b7280;
+        }
+        .chart-bar .value {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            padding: 10px 12px 10px 0;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        td {
+            padding: 10px 12px 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            color: #1a1a2e;
+        }
+        .badge-status {
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-status.critical { background: rgba(239,68,68,0.10); color: #ef4444; }
+        .badge-status.warning { background: rgba(245,158,11,0.10); color: #f59e0b; }
+        .badge-status.normal { background: rgba(16,185,129,0.10); color: #10b981; }
+
+        /* ===== QUICK ACTIONS ===== */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .quick-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            text-decoration: none;
+            color: #1a1a2e;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .quick-item:hover { background: #0F2A5F; color: #FFFFFF; border-color: #0F2A5F; transform: translateY(-2px); }
+        .quick-item .icon { font-size: 22px; display: block; margin-bottom: 4px; }
+        .quick-item .label { font-size: 13px; font-weight: 600; }
+
+
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .category-item:last-child { border-bottom: none; }
+        .category-item .name { font-size: 14px; color: #1a1a2e; }
+        .category-item .percent { font-size: 14px; font-weight: 600; color: #0F2A5F; }
+        .category-bar {
+            width: 100%;
+            height: 4px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .category-bar .fill { height: 100%; border-radius: 4px; background: #0F2A5F; }
+
+       
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .alert-item:last-child { border-bottom: none; }
+        .alert-item .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(239,68,68,0.10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ef4444;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .alert-item .info .title { font-size: 14px; font-weight: 500; color: #1a1a2e; }
+        .alert-item .info .desc { font-size: 12px; color: #6b7280; }
+
+    
+        .btn-bonus {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-bonus:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        
+        .pie-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #0F2A5F 0% 33%,
+                #1a4a7a 33% 62%,
+                #2a6a9a 62% 81%,
+                #4a8aba 81% 91%,
+                #6aaada 91% 100%
+            );
+            position: relative;
+            box-shadow: 0 4px 20px rgba(15,42,95,0.15);
+        }
+        .pie-chart .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .pie-chart .center .num {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0F2A5F;
+        }
+        .pie-chart .center .label {
+            font-size: 10px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .pie-legend .item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #1a1a2e;
+        }
+        .pie-legend .item .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .pie-legend .item .val {
+            margin-left: auto;
+            font-weight: 600;
+            color: #0F2A5F;
+        }
+
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+            .main { margin-left: 200px; padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .content-row { grid-template-columns: 1fr; }
+            .top-header { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+            .main { margin-left: 0; padding: 16px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .quick-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main {
+            background: #0a0e1a;
+        }
+        body.dark-mode .card {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .stat-card {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .stat-card .number {
+            color: #fff;
+        }
+        body.dark-mode .stat-card .label {
+            color: rgba(255,255,255,0.5);
+        }
+        body.dark-mode .top-header .greeting h1 {
+            color: #fff;
+        }
+        body.dark-mode .top-header .greeting p {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .top-header .right .date {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .top-header .right .profile {
+            background: rgba(255,255,255,0.05);
+        }
+        body.dark-mode .top-header .right .profile .info .name {
+            color: #fff;
+        }
+        body.dark-mode .top-header .right .profile .info .role {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .top-header .right .notif {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+        }
+        body.dark-mode .card .card-header h3 {
+            color: #fff;
+        }
+        body.dark-mode table td {
+            color: rgba(255,255,255,0.8);
+        }
+        body.dark-mode table th {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .quick-item {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+        body.dark-mode .quick-item:hover {
+            background: rgba(15,42,95,0.3);
+            border-color: #0F2A5F;
+        }
+        body.dark-mode .category-item .name {
+            color: rgba(255,255,255,0.8);
+        }
+        body.dark-mode .category-item .percent {
+            color: #fff;
+        }
+        body.dark-mode .alert-item .info .title {
+            color: #fff;
+        }
+        body.dark-mode .alert-item .info .desc {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .chart-bar .value {
+            color: rgba(255,255,255,0.6);
+        }
+        body.dark-mode .chart-bar .label {
+            color: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .btn-bonus {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        body.dark-mode .btn-bonus:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        body.dark-mode .pie-chart .center {
+            background: #1a1a2e;
+        }
+        body.dark-mode .pie-chart .center .num {
+            color: #fff;
+        }
+        body.dark-mode .pie-chart .center .label {
+            color: rgba(255,255,255,0.5);
+        }
+        body.dark-mode .pie-legend .item {
+            color: #e2e8f0;
+        }
+        body.dark-mode .pie-legend .item .val {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    
+    {% include 'sidebar.html' %}
+
+    <div class="main">
+
+        <div class="top-header">
+            <div class="greeting">
+                <h1>Welcome back, <span id="userName">Admin</span> 👋</h1>
+                <p>You have full access to all systems and features.</p>
+            </div>
+            <div class="right">
+                <span class="date" id="currentDate"></span>
+                <button class="notif"><i class="fas fa-bell"></i><span class="dot"></span></button>
+                <div class="profile" onclick="location.href='/profile'">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="info">
+                        <div class="name" id="userFullName">Admin</div>
+                        <div class="role">Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;">
+            <button class="btn-bonus" onclick="checkLowStock()" style="background:#ef4444; color:white;">
+                <i class="fas fa-bell"></i> Low Stock
+                <span id="lowStockBadge" style="background:white; color:#ef4444; padding:2px 10px; border-radius:20px; font-size:12px; margin-left:5px;">0</span>
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="top"><div class="icon blue"><i class="fas fa-boxes"></i></div><span class="change up">↑ 12.5%</span></div>
+                <div class="number" id="totalProducts">0</div>
+                <div class="label">Total Products</div>
+                <div class="sub">vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="top"><div class="icon green"><i class="fas fa-rupee-sign"></i></div><span class="change up">↑ 8.3%</span></div>
+                <div class="number" id="totalStockValue">₹0</div>
+                <div class="label">Total Stock Value</div>
+                <div class="sub">vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="top"><div class="icon orange"><i class="fas fa-shopping-cart"></i></div><span class="change up">↑ 15.7%</span></div>
+                <div class="number" id="totalOrders">0</div>
+                <div class="label">Total Orders</div>
+                <div class="sub">vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="top"><div class="icon pink"><i class="fas fa-exclamation-triangle"></i></div><span class="change down">↓ 5.2%</span></div>
+                <div class="number" id="lowStockItems">0</div>
+                <div class="label">Low Stock Items</div>
+                <div class="sub">vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="top"><div class="icon purple"><i class="fas fa-users"></i></div><span class="change up">↑ 3.1%</span></div>
+                <div class="number" id="totalUsers">0</div>
+                <div class="label">Total Users</div>
+                <div class="sub">vs last month</div>
+            </div>
+        </div>
+
+        <div class="content-row">
+            <div class="card">
+                <div class="card-header">
+                    <h3>📊 Stock Overview</h3>
+                    <span style="font-size:13px; color:#6b7280;">YTD</span>
+                </div>
+                <div class="pie-container" id="pieContainer">
+                    <div class="pie-chart" id="pieChart">
+                        <div class="center">
+                            <span class="num" id="pieTotal">0</span>
+                            <span class="label">Total Items</span>
+                        </div>
+                    </div>
+                    <div class="pie-legend" id="pieLegend">
+                        <div class="item">
+                            <span class="dot" style="background:#0F2A5F;"></span>
+                            Electronics <span class="val" id="pct1">33%</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot" style="background:#1a4a7a;"></span>
+                            Clothing <span class="val" id="pct2">29%</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot" style="background:#2a6a9a;"></span>
+                            Home & Kitchen <span class="val" id="pct3">19%</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot" style="background:#4a8aba;"></span>
+                            Books <span class="val" id="pct4">10%</span>
+                        </div>
+                        <div class="item">
+                            <span class="dot" style="background:#6aaada;"></span>
+                            Others <span class="val" id="pct5">9%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>📊 Category Distribution</h3></div>
+                <div id="categoryList">
+                    <div class="category-item"><span class="name">Electronics</span><span class="percent">33%</span></div>
+                    <div class="category-bar"><div class="fill" style="width:33%;"></div></div>
+                    <div class="category-item"><span class="name">Clothing</span><span class="percent">29%</span></div>
+                    <div class="category-bar"><div class="fill" style="width:29%;"></div></div>
+                    <div class="category-item"><span class="name">Home & Kitchen</span><span class="percent">19%</span></div>
+                    <div class="category-bar"><div class="fill" style="width:19%;"></div></div>
+                    <div class="category-item"><span class="name">Books</span><span class="percent">10%</span></div>
+                    <div class="category-bar"><div class="fill" style="width:10%;"></div></div>
+                    <div class="category-item"><span class="name">Others</span><span class="percent">9%</span></div>
+                    <div class="category-bar"><div class="fill" style="width:9%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:28px;">
+            <h3 style="font-size:16px; font-weight:600; color:#1a1a2e; margin-bottom:14px;">⚡ Quick Access</h3>
+            <div class="quick-grid">
+                <a href="/add-product" class="quick-item"><span class="icon">➕</span><span class="label">Add Product</span></a>
+                <a href="/sales-report" class="quick-item"><span class="icon">💳</span><span class="label">New Sale</span></a>
+                <a href="/sales-report" class="quick-item"><span class="icon">📄</span><span class="label">View Reports</span></a>
+                <a href="/settings" class="quick-item"><span class="icon">⚙️</span><span class="label">Settings</span></a>
+            </div>
+        </div>
+
+        <div class="content-row">
+            <div class="card">
+                <div class="card-header"><h3>📋 Recent Orders</h3><a href="#">View All</a></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
+                        <tbody>
+                            <tr><td>CRD-00123</td><td>25</td><td>₹2,450</td></tr>
+                            <tr><td>CRD-00122</td><td>25</td><td>₹1,200</td></tr>
+                            <tr><td>CRD-00121</td><td>24</td><td>₹1,500</td></tr>
+                            <tr><td>CRD-00120</td><td>24</td><td>₹2,150</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h3>⚠️ Stock Alerts</h3><a href="/products">View All</a></div>
+                <div id="stockAlerts">
+                    <div class="alert-item">
+                        <div class="icon"><i class="fas fa-exclamation"></i></div>
+                        <div class="info"><div class="title">Wireless Mouse</div><div class="desc">Only 5 items left</div></div>
+                    </div>
+                    <div class="alert-item">
+                        <div class="icon"><i class="fas fa-exclamation"></i></div>
+                        <div class="info"><div class="title">USB Cable</div><div class="desc">Only 5 items left</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        function loadUser() {
+            fetch('/api/current-user')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        var u = data.user;
+                        var name = u.full_name || u.username || 'Admin';
+                        document.getElementById('userName').textContent = name;
+                        document.getElementById('userFullName').textContent = name;
+                        document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
+                    }
+                })
+                .catch(function(e) { console.error(e); });
+        }
+
+
+        function loadStats() {
+            fetch('/api/stats')
+                .then(function(res) { return res.json(); })
+                .then(function(stats) {
+                    document.getElementById('totalProducts').textContent = stats.total_products || 0;
+                    document.getElementById('totalStockValue').textContent = '₹' + (stats.total_stock || 0).toLocaleString();
+                    document.getElementById('totalOrders').textContent = stats.total_orders || 0;
+                    document.getElementById('lowStockItems').textContent = stats.low_stock || 0;
+                    document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                    document.getElementById('pieTotal').textContent = stats.total_products || 0;
+                })
+                .catch(function(e) { console.error(e); });
+        }
+
+        function checkLowStock() {
+            fetch('/api/low-stock')
+                .then(function(res) { return res.json(); })
+                .then(function(products) {
+                    var badge = document.getElementById('lowStockBadge');
+                    if (badge) badge.textContent = products.length || 0;
+                    if (products && products.length > 0) {
+                        var msg = '⚠️ LOW STOCK ALERT\n\n';
+                        products.forEach(function(p) {
+                            msg += '📦 ' + p.name + '\n   Stock: ' + p.quantity + '\n\n';
+                        });
+                        alert(msg);
+                    } else {
+                        alert('✅ All products are well stocked!');
+                    }
+                })
+                .catch(function(e) { alert('❌ Error'); });
+        }
+
+        function logout() {
+            if (confirm('Logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUser();
+            loadStats();
+            setTimeout(checkLowStock, 2000);
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    }
+});
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1024 @@
+<!-- ============================================
+     COMMON SIDEBAR - सर्व Pages साठी
+     ============================================ -->
+<div class="sidebar" id="mainSidebar">
+    <div class="logo">
+        <i class="fas fa-cube"></i>
+        StockNova<span>.</span>
+    </div>
+
+    <div class="menu-label">Main</div>
+    <a href="/dashboard" class="menu-item" id="navDashboard">
+        <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    <a href="/products" class="menu-item" id="navProducts">
+        <i class="fas fa-boxes"></i> Products
+    </a>
+    <a href="/suppliers" class="menu-item" id="navSuppliers">
+        <i class="fas fa-building"></i> Suppliers
+    </a>
+    <a href="/sales-report" class="menu-item" id="navSales">
+        <i class="fas fa-chart-line"></i> Sales
+    </a>
+
+    <div class="menu-label">Account</div>
+    <a href="/profile" class="menu-item" id="navProfile">
+        <i class="fas fa-user-circle"></i> Profile
+    </a>
+    <a href="/settings" class="menu-item" id="navSettings">
+        <i class="fas fa-cog"></i> Settings
+    </a>
+
+    <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</div>
+
+<script>
+    // ===== HIGHLIGHT ACTIVE MENU =====
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar .menu-item').forEach(function(item) {
+            var href = item.getAttribute('href');
+            if (href && currentPath.includes(href)) {
+                item.classList.add('active');
+            }
+            if (currentPath === '/dashboard' && href === '/dashboard') {
+                item.classList.add('active');
+            }
+        });
+    });
+
+    // ===== LOGOUT =====
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            fetch('/api/logout', { method: 'POST' })
+                .then(function() { window.location.href = '/login'; })
+                .catch(function() { window.location.href = '/login'; });
+        }
+    }
+</script>
+
+<style>
+    /* ============================================
+       RESET & BASE
+    ============================================ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', Arial, sans-serif;
+        background: #f0f4f8;
+        color: #1a1a2e;
+        display: flex;
+        min-height: 100vh;
+        transition: background 0.4s ease, color 0.4s ease;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* ============================================
+       SIDEBAR - LIGHT MODE
+    ============================================ */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px;
+        height: 100vh;
+        background: #0F2A5F;
+        padding: 28px 18px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        z-index: 1000;
+        transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+    .sidebar .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 22px;
+        font-weight: 800;
+        color: #FFFFFF;
+        padding: 0 8px 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+    .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+    .sidebar .menu-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: rgba(255,255,255,0.35);
+        padding: 24px 12px 8px;
+        font-weight: 600;
+    }
+    .sidebar .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 11px 16px;
+        border-radius: 10px;
+        color: rgba(255,255,255,0.6);
+        font-size: 14px;
+        font-weight: 500;
+        transition: 0.25s;
+        margin: 2px 0;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        width: 100%;
+        text-align: left;
+        font-family: 'Inter', sans-serif;
+        text-decoration: none;
+    }
+    .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+    .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+    .sidebar .menu-item.active {
+        background: rgba(255,255,255,0.12);
+        color: #FFFFFF;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar .logout-btn {
+        margin-top: auto;
+        padding: 12px 16px;
+        border-radius: 10px;
+        color: #FFFFFF;
+        border: 1px solid rgba(255,255,255,0.15);
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        font-weight: 600;
+        font-size: 14px;
+        background: transparent;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+    }
+    .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+    /* ============================================
+       MAIN CONTENT
+    ============================================ */
+    .main {
+        margin-left: 260px;
+        padding: 28px 36px;
+        flex: 1;
+        background: #f0f4f8;
+        min-height: 100vh;
+        transition: background 0.4s ease;
+    }
+
+    /* ============================================
+       DARK MODE - COMPLETE WEBSITE
+    ============================================ */
+    body.dark-mode {
+        background: #0a0e1a;
+        color: #e2e8f0;
+    }
+    body.dark-mode .main {
+        background: #0a0e1a;
+    }
+    body.dark-mode .card {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .stat-card {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .stat-card .number {
+        color: #fff;
+    }
+    body.dark-mode .stat-card .label {
+        color: rgba(255,255,255,0.5);
+    }
+    body.dark-mode .header h1 {
+        color: #fff;
+    }
+    body.dark-mode .header h1 span {
+        color: #667eea;
+    }
+    body.dark-mode .header .role {
+        background: rgba(15,42,95,0.3);
+        color: #667eea;
+    }
+    body.dark-mode .header a {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+    }
+    body.dark-mode .header a:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    body.dark-mode .top-header .greeting h1 {
+        color: #fff;
+    }
+    body.dark-mode .top-header .greeting p {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .top-header .right .date {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .top-header .right .profile {
+        background: rgba(255,255,255,0.05);
+    }
+    body.dark-mode .top-header .right .profile .info .name {
+        color: #fff;
+    }
+    body.dark-mode .top-header .right .profile .info .role {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .top-header .right .notif {
+        background: rgba(255,255,255,0.05);
+        color: rgba(255,255,255,0.6);
+    }
+    body.dark-mode .card .card-header h3 {
+        color: #fff;
+    }
+    body.dark-mode table td {
+        color: rgba(255,255,255,0.8);
+    }
+    body.dark-mode table th {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .form-card {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .form-group label {
+        color: rgba(255,255,255,0.6);
+    }
+    body.dark-mode .form-group input,
+    body.dark-mode .form-group select,
+    body.dark-mode .form-group textarea {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    body.dark-mode .form-group input:focus,
+    body.dark-mode .form-group select:focus,
+    body.dark-mode .form-group textarea:focus {
+        border-color: #667eea;
+        background: rgba(255,255,255,0.08);
+    }
+    body.dark-mode .form-group select option {
+        background: #1a1a2e;
+        color: #fff;
+    }
+    body.dark-mode .btn-secondary {
+        background: rgba(255,255,255,0.05);
+        color: rgba(255,255,255,0.6);
+        border-color: rgba(255,255,255,0.08);
+    }
+    body.dark-mode .btn-secondary:hover {
+        background: rgba(255,255,255,0.1);
+    }
+    body.dark-mode .settings-card {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .settings-card .section {
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .settings-card .section .title {
+        color: #fff;
+    }
+    body.dark-mode .setting-item {
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .setting-item .left .label {
+        color: #fff;
+    }
+    body.dark-mode .setting-item .left .desc {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .access-note {
+        color: rgba(255,255,255,0.3);
+    }
+    body.dark-mode .profile-card {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .profile-card .name {
+        color: #fff;
+    }
+    body.dark-mode .profile-card .role {
+        color: rgba(255,255,255,0.5);
+    }
+    body.dark-mode .profile-card .info-grid .item {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .profile-card .info-grid .item .value {
+        color: #fff;
+    }
+    body.dark-mode .profile-card .info-grid .item .label {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .msg.success {
+        background: rgba(16,185,129,0.1);
+        border-color: rgba(16,185,129,0.2);
+        color: #2ed573;
+    }
+    body.dark-mode .msg.error {
+        background: rgba(239,68,68,0.1);
+        border-color: rgba(239,68,68,0.2);
+        color: #f5576c;
+    }
+    body.dark-mode .msg.info {
+        background: rgba(15,42,95,0.2);
+        border-color: rgba(15,42,95,0.3);
+        color: #667eea;
+    }
+    body.dark-mode .quick-item {
+        background: rgba(255,255,255,0.03);
+        border-color: rgba(255,255,255,0.06);
+        color: #fff;
+    }
+    body.dark-mode .quick-item:hover {
+        background: rgba(15,42,95,0.3);
+        border-color: #0F2A5F;
+    }
+    body.dark-mode .category-item .name {
+        color: rgba(255,255,255,0.8);
+    }
+    body.dark-mode .category-item .percent {
+        color: #fff;
+    }
+    body.dark-mode .category-bar {
+        background: rgba(255,255,255,0.05);
+    }
+    body.dark-mode .alert-item {
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .alert-item .info .title {
+        color: #fff;
+    }
+    body.dark-mode .alert-item .info .desc {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .modal-content {
+        background: #1a1a2e;
+        border-color: rgba(255,255,255,0.06);
+    }
+    body.dark-mode .modal-content h2 {
+        color: #fff;
+    }
+    body.dark-mode .modal-content input,
+    body.dark-mode .modal-content textarea {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    body.dark-mode .modal-content input::placeholder,
+    body.dark-mode .modal-content textarea::placeholder {
+        color: rgba(255,255,255,0.3);
+    }
+    body.dark-mode .modal-content .close-btn {
+        color: rgba(255,255,255,0.4);
+    }
+    body.dark-mode .modal-content .close-btn:hover {
+        color: #fff;
+    }
+    body.dark-mode .modal-content .btn-primary {
+        background: #0F2A5F;
+        color: #fff;
+    }
+    body.dark-mode .modal-content .btn-primary:hover {
+        background: #1a3a7a;
+    }
+    body.dark-mode .toolbar input {
+        background: rgba(255,255,255,0.05);
+        border-color: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    body.dark-mode .toolbar input::placeholder {
+        color: rgba(255,255,255,0.3);
+    }
+    body.dark-mode .toolbar input:focus {
+        border-color: #667eea;
+        background: rgba(255,255,255,0.08);
+    }
+    body.dark-mode .btn-warning {
+        background: rgba(245,158,11,0.15);
+        color: #f59e0b;
+    }
+    body.dark-mode .btn-warning:hover {
+        background: rgba(245,158,11,0.25);
+    }
+    body.dark-mode .btn-edit {
+        background: rgba(102,126,234,0.15);
+        color: #667eea;
+    }
+    body.dark-mode .btn-edit:hover {
+        background: rgba(102,126,234,0.25);
+    }
+    body.dark-mode .btn-danger {
+        background: rgba(239,68,68,0.15);
+        color: #ef4444;
+    }
+    body.dark-mode .btn-danger:hover {
+        background: rgba(239,68,68,0.25);
+    }
+    body.dark-mode .add-btn {
+        background: #10b981;
+        color: #fff;
+    }
+    body.dark-mode .add-btn:hover {
+        background: #059669;
+    }
+    body.dark-mode .btn-primary {
+        background: #0F2A5F;
+        color: #fff;
+    }
+    body.dark-mode .btn-primary:hover {
+        background: #1a3a7a;
+    }
+    body.dark-mode .pie-chart .center {
+        background: #1a1a2e;
+    }
+    body.dark-mode .pie-chart .center .num {
+        color: #fff;
+    }
+    body.dark-mode .pie-chart .center .label {
+        color: rgba(255,255,255,0.5);
+    }
+    body.dark-mode .pie-legend .item {
+        color: #e2e8f0;
+    }
+    body.dark-mode .pie-legend .item .val {
+        color: #667eea;
+    }
+
+    /* ============================================
+       DARK MODE SIDEBAR
+    ============================================ */
+    body.dark-mode .sidebar {
+        background: #0a0e1a;
+        border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    body.dark-mode .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.15);
+    }
+    body.dark-mode .sidebar .logo {
+        color: #FFFFFF;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    body.dark-mode .sidebar .logo span {
+        color: rgba(255,255,255,0.7);
+    }
+    body.dark-mode .sidebar .logo i {
+        color: #FFFFFF;
+    }
+    body.dark-mode .sidebar .menu-label {
+        color: rgba(255,255,255,0.25);
+    }
+    body.dark-mode .sidebar .menu-item {
+        color: rgba(255,255,255,0.5);
+    }
+    body.dark-mode .sidebar .menu-item:hover {
+        background: rgba(255,255,255,0.05);
+        color: #FFFFFF;
+    }
+    body.dark-mode .sidebar .menu-item.active {
+        background: rgba(102,126,234,0.15);
+        color: #667eea;
+        border: 1px solid rgba(102,126,234,0.08);
+    }
+    body.dark-mode .sidebar .logout-btn {
+        color: #f5576c;
+        border: 1px solid rgba(245,87,108,0.2);
+    }
+    body.dark-mode .sidebar .logout-btn:hover {
+        background: rgba(245,87,108,0.08);
+    }
+
+    @media (max-width: 768px) {
+        .sidebar { width: 200px; padding: 20px 14px; }
+        .main { margin-left: 200px; padding: 20px; }
+    }
+    @media (max-width: 480px) {
+        .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+        .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+        .sidebar .menu-label { display: none; }
+        .main { margin-left: 0; padding: 16px; }
+    }
+    /* ============================================
+   DARK MODE - ALL PAGES
+   ============================================ */
+body.dark-mode {
+    background: #0a0e1a;
+    color: #e2e8f0;
+}
+body.dark-mode .main {
+    background: #0a0e1a;
+}
+body.dark-mode .main-content {
+    background: #0a0e1a;
+}
+body.dark-mode .container {
+    background: transparent;
+}
+body.dark-mode .card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .stat-card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .stat-card .number {
+    color: #fff;
+}
+body.dark-mode .stat-card .label {
+    color: rgba(255,255,255,0.5);
+}
+body.dark-mode .stat-card .sub {
+    color: rgba(255,255,255,0.2);
+}
+body.dark-mode .header h1 {
+    color: #fff;
+}
+body.dark-mode .header h1 span {
+    color: #667eea;
+}
+body.dark-mode .header .role {
+    background: rgba(15,42,95,0.3);
+    color: #667eea;
+}
+body.dark-mode .header a {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+}
+body.dark-mode .header a:hover {
+    background: rgba(255,255,255,0.1);
+}
+body.dark-mode .top-header .greeting h1 {
+    color: #fff;
+}
+body.dark-mode .top-header .greeting p {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .top-header .right .date {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .top-header .right .profile {
+    background: rgba(255,255,255,0.05);
+}
+body.dark-mode .top-header .right .profile .info .name {
+    color: #fff;
+}
+body.dark-mode .top-header .right .profile .info .role {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .top-header .right .notif {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6);
+}
+body.dark-mode .card .card-header h3 {
+    color: #fff;
+}
+body.dark-mode .card .card-header a {
+    color: #667eea;
+}
+body.dark-mode .card .card-header span {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode table td {
+    color: rgba(255,255,255,0.8);
+}
+body.dark-mode table th {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .form-card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .form-group label {
+    color: rgba(255,255,255,0.6);
+}
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: #fff;
+}
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group select:focus,
+body.dark-mode .form-group textarea:focus {
+    border-color: #667eea;
+    background: rgba(255,255,255,0.08);
+}
+body.dark-mode .form-group select option {
+    background: #1a1a2e;
+    color: #fff;
+}
+body.dark-mode .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.6);
+    border-color: rgba(255,255,255,0.08);
+}
+body.dark-mode .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+}
+body.dark-mode .settings-card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .settings-card .section {
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .settings-card .section .title {
+    color: #fff;
+}
+body.dark-mode .setting-item {
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .setting-item .left .label {
+    color: #fff;
+}
+body.dark-mode .setting-item .left .desc {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .access-note {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode .profile-card {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .profile-card .name {
+    color: #fff;
+}
+body.dark-mode .profile-card .role {
+    color: rgba(255,255,255,0.5);
+}
+body.dark-mode .profile-card .info-grid .item {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .profile-card .info-grid .item .value {
+    color: #fff;
+}
+body.dark-mode .profile-card .info-grid .item .label {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .msg.success {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.2);
+    color: #2ed573;
+}
+body.dark-mode .msg.error {
+    background: rgba(239,68,68,0.1);
+    border-color: rgba(239,68,68,0.2);
+    color: #f5576c;
+}
+body.dark-mode .msg.info {
+    background: rgba(15,42,95,0.2);
+    border-color: rgba(15,42,95,0.3);
+    color: #667eea;
+}
+body.dark-mode .quick-item {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.06);
+    color: #fff;
+}
+body.dark-mode .quick-item:hover {
+    background: rgba(15,42,95,0.3);
+    border-color: #0F2A5F;
+}
+body.dark-mode .category-item .name {
+    color: rgba(255,255,255,0.8);
+}
+body.dark-mode .category-item .percent {
+    color: #fff;
+}
+body.dark-mode .category-bar {
+    background: rgba(255,255,255,0.05);
+}
+body.dark-mode .alert-item {
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .alert-item .info .title {
+    color: #fff;
+}
+body.dark-mode .alert-item .info .desc {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .alert-item .icon {
+    background: rgba(245,87,108,0.15);
+    color: #f5576c;
+}
+body.dark-mode .modal-content {
+    background: #1a1a2e;
+    border-color: rgba(255,255,255,0.06);
+}
+body.dark-mode .modal-content h2 {
+    color: #fff;
+}
+body.dark-mode .modal-content input,
+body.dark-mode .modal-content textarea {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: #fff;
+}
+body.dark-mode .modal-content input::placeholder,
+body.dark-mode .modal-content textarea::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode .modal-content .close-btn {
+    color: rgba(255,255,255,0.4);
+}
+body.dark-mode .modal-content .close-btn:hover {
+    color: #fff;
+}
+body.dark-mode .modal-content .btn-primary {
+    background: #0F2A5F;
+    color: #fff;
+}
+body.dark-mode .modal-content .btn-primary:hover {
+    background: #1a3a7a;
+}
+body.dark-mode .toolbar input {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: #fff;
+}
+body.dark-mode .toolbar input::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode .toolbar input:focus {
+    border-color: #667eea;
+    background: rgba(255,255,255,0.08);
+}
+body.dark-mode .btn-warning {
+    background: rgba(245,158,11,0.15);
+    color: #f59e0b;
+}
+body.dark-mode .btn-warning:hover {
+    background: rgba(245,158,11,0.25);
+}
+body.dark-mode .btn-edit {
+    background: rgba(102,126,234,0.15);
+    color: #667eea;
+}
+body.dark-mode .btn-edit:hover {
+    background: rgba(102,126,234,0.25);
+}
+body.dark-mode .btn-danger {
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+}
+body.dark-mode .btn-danger:hover {
+    background: rgba(239,68,68,0.25);
+}
+body.dark-mode .add-btn {
+    background: #10b981;
+    color: #fff;
+}
+body.dark-mode .add-btn:hover {
+    background: #059669;
+}
+body.dark-mode .btn-primary {
+    background: #0F2A5F;
+    color: #fff;
+}
+body.dark-mode .btn-primary:hover {
+    background: #1a3a7a;
+}
+body.dark-mode .empty {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode .back-link {
+    color: #667eea;
+}
+body.dark-mode .back-link:hover {
+    color: #fff;
+}
+body.dark-mode .stock-input {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.08);
+    color: #fff;
+}
+body.dark-mode .stock-input:focus {
+    border-color: #667eea;
+}
+body.dark-mode .btn-update {
+    background: rgba(255,189,46,0.15);
+    color: #ffbd2e;
+}
+body.dark-mode .btn-update:hover {
+    background: rgba(255,189,46,0.25);
+}
+body.dark-mode .badge-status {
+    color: #fff;
+}
+body.dark-mode .status {
+    color: #fff;
+}
+body.dark-mode .status.in-stock {
+    background: rgba(46,213,115,0.15);
+    color: #2ed573;
+}
+body.dark-mode .status.low-stock {
+    background: rgba(255,159,67,0.15);
+    color: #ff9f43;
+}
+body.dark-mode .status.out-of-stock {
+    background: rgba(245,87,108,0.15);
+    color: #f5576c;
+}
+body.dark-mode .pie-chart .center {
+    background: #1a1a2e;
+}
+body.dark-mode .pie-chart .center .num {
+    color: #fff;
+}
+body.dark-mode .pie-chart .center .label {
+    color: rgba(255,255,255,0.5);
+}
+body.dark-mode .pie-legend .item {
+    color: #e2e8f0;
+}
+body.dark-mode .pie-legend .item .val {
+    color: #667eea;
+}
+body.dark-mode .chart-bar .value {
+    color: rgba(255,255,255,0.6);
+}
+body.dark-mode .chart-bar .label {
+    color: rgba(255,255,255,0.3);
+}
+body.dark-mode .role-badge {
+    background: rgba(240,147,251,0.15);
+    color: #f093fb;
+}
+body.dark-mode .staff-name {
+    color: #f093fb;
+}
+body.dark-mode .btn-bonus {
+    background: rgba(255,255,255,0.05) !important;
+    color: #fff !important;
+}
+body.dark-mode .btn-bonus:hover {
+    background: rgba(255,255,255,0.1) !important;
+}
+body.dark-mode .btn-bonus[style*="background:#0F2A5F"] {
+    background: #0F2A5F !important;
+}
+body.dark-mode .btn-bonus[style*="background:#10b981"] {
+    background: #10b981 !important;
+}
+body.dark-mode .btn-bonus[style*="background:#f59e0b"] {
+    background: #f59e0b !important;
+}
+body.dark-mode .btn-bonus[style*="background:#ef4444"] {
+    background: #ef4444 !important;
+}
+/* ============================================
+   DARK MODE - MAIN CONTENT FOR ALL PAGES
+   ============================================ */
+body.dark-mode .main,
+body.dark-mode .main-content,
+body.dark-mode .container {
+    background: #0a0e1a !important;
+}
+
+body.dark-mode .card,
+body.dark-mode .stat-card,
+body.dark-mode .settings-card,
+body.dark-mode .profile-card,
+body.dark-mode .form-card,
+body.dark-mode .table-wrap {
+    background: rgba(255,255,255,0.03) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark-mode .header h1,
+body.dark-mode .header h1 span,
+body.dark-mode .card .card-header h3,
+body.dark-mode .settings-card .section .title,
+body.dark-mode .profile-card .name,
+body.dark-mode .profile-card .info-grid .item .value,
+body.dark-mode .setting-item .left .label,
+body.dark-mode .stat-card .number {
+    color: #fff !important;
+}
+
+body.dark-mode .stat-card .label,
+body.dark-mode .profile-card .role,
+body.dark-mode .setting-item .left .desc,
+body.dark-mode .access-note,
+body.dark-mode .sub {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+body.dark-mode table td {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+body.dark-mode table th {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+body.dark-mode .toolbar input,
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+    color: #fff !important;
+}
+
+body.dark-mode .toolbar input::placeholder,
+body.dark-mode .form-group input::placeholder {
+    color: rgba(255,255,255,0.3) !important;
+}
+
+body.dark-mode .btn-secondary {
+    background: rgba(255,255,255,0.05) !important;
+    color: rgba(255,255,255,0.6) !important;
+    border-color: rgba(255,255,255,0.08) !important;
+}
+
+body.dark-mode .quick-item {
+    background: rgba(255,255,255,0.03) !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    color: #fff !important;
+}
+
+body.dark-mode .quick-item:hover {
+    background: rgba(15,42,95,0.3) !important;
+    border-color: #0F2A5F !important;
+}
+
+body.dark-mode .category-item .name {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+body.dark-mode .category-item .percent {
+    color: #fff !important;
+}
+
+body.dark-mode .category-bar {
+    background: rgba(255,255,255,0.05) !important;
+}
+
+body.dark-mode .alert-item {
+    border-color: rgba(255,255,255,0.06) !important;
+}
+
+body.dark-mode .alert-item .info .title {
+    color: #fff !important;
+}
+
+body.dark-mode .alert-item .info .desc {
+    color: rgba(255,255,255,0.4) !important;
+}
+
+body.dark-mode .btn-edit {
+    background: rgba(102,126,234,0.15) !important;
+    color: #667eea !important;
+}
+
+body.dark-mode .btn-danger {
+    background: rgba(239,68,68,0.15) !important;
+    color: #ef4444 !important;
+}
+
+body.dark-mode .btn-warning {
+    background: rgba(245,158,11,0.15) !important;
+    color: #f59e0b !important;
+}
+
+body.dark-mode .add-btn {
+    background: #10b981 !important;
+    color: #fff !important;
+}
+
+body.dark-mode .btn-primary {
+    background: #0F2A5F !important;
+    color: #fff !important;
+}
+
+body.dark-mode .empty {
+    color: rgba(255,255,255,0.3) !important;
+}
+
+body.dark-mode .back-link {
+    color: #667eea !important;
+}
+
+body.dark-mode .back-link:hover {
+    color: #fff !important;
+}
+
+body.dark-mode .role-badge {
+    background: rgba(240,147,251,0.15) !important;
+    color: #f093fb !important;
+}
+
+body.dark-mode .status-badge {
+    color: #fff !important;
+}
+</style>

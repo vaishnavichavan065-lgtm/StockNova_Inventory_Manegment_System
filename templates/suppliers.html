@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Suppliers - StockNova Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span {
+            color: #0F2A5F;
+        }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        .add-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+        .add-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .toolbar input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 15px;
+            min-width: 200px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .toolbar input:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+        .toolbar input::placeholder {
+            color: #9ca3af;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: #0F2A5F;
+            color: #FFFFFF;
+        }
+        .btn-primary:hover {
+            background: #1a3a7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15,42,95,0.25);
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: #FFFFFF;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid #f3f4f6;
+            color: #1a1a2e;
+        }
+        tr:hover td {
+            background: #f9fafb;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-edit {
+            background: rgba(15,42,95,0.08);
+            color: #0F2A5F;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: 0.3s;
+        }
+        .btn-edit:hover {
+            background: rgba(15,42,95,0.15);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: #FFFFFF;
+            padding: 35px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-content h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .modal-content input:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+        .modal-content input::placeholder,
+        .modal-content textarea::placeholder {
+            color: #9ca3af;
+        }
+        .modal-content .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #0F2A5F;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-content .btn-primary:hover {
+            background: #1a3a7a;
+        }
+        .modal-content .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 28px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-content .close-btn:hover { color: #1a1a2e; }
+
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .toolbar {
+                flex-direction: column;
+            }
+            .toolbar input {
+                width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+        }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main {
+            background: #0a0e1a;
+        }
+        body.dark-mode .header h1 {
+            color: #fff;
+        }
+        body.dark-mode .header h1 span {
+            color: #667eea;
+        }
+        body.dark-mode .header a {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        body.dark-mode .header a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode table {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode th {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode td {
+            color: rgba(255,255,255,0.8);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode tr:hover td {
+            background: rgba(255,255,255,0.05);
+        }
+        body.dark-mode .empty {
+            color: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .btn-edit {
+            background: rgba(102,126,234,0.15);
+            color: #667eea;
+        }
+        body.dark-mode .btn-danger {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+        }
+        body.dark-mode .btn-danger:hover {
+            background: rgba(239,68,68,0.25);
+        }
+        body.dark-mode .btn-primary {
+            background: #0F2A5F;
+            color: #fff;
+        }
+        body.dark-mode .btn-warning {
+            background: rgba(245,158,11,0.15);
+            color: #f59e0b;
+        }
+        body.dark-mode .modal-content {
+            background: #1f2937;
+        }
+        body.dark-mode .modal-content h2 {
+            color: #ffffff;
+        }
+        body.dark-mode .modal-content input,
+        body.dark-mode .modal-content textarea {
+            background: #374151;
+            border-color: #4b5563;
+            color: #ffffff;
+        }
+        body.dark-mode .modal-content input::placeholder,
+        body.dark-mode .modal-content textarea::placeholder {
+            color: #9ca3af;
+        }
+        body.dark-mode .modal-content .close-btn {
+            color: #9ca3af;
+        }
+        body.dark-mode .modal-content .close-btn:hover {
+            color: #ffffff;
+        }
+        body.dark-mode .modal-content .btn-primary {
+            background: #0F2A5F;
+            color: #ffffff;
+        }
+        body.dark-mode .modal-content .btn-primary:hover {
+            background: #1a3a7a;
+        }
+        body.dark-mode .add-btn {
+            background: #10b981;
+            color: #fff;
+        }
+        body.dark-mode .add-btn:hover {
+            background: #059669;
+        }
+        body.dark-mode .toolbar input {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .toolbar input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    {% include 'sidebar.html' %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main">
+
+        <div class="header">
+            <h1>🏢 <span>Suppliers</span></h1>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="add-btn" onclick="openModal()"><i class="fas fa-plus"></i> Add Supplier</button>
+                <a href="/dashboard"><i class="fas fa-arrow-left"></i> Dashboard</a>
+            </div>
+        </div>
+
+        <!-- ===== TOOLBAR ===== -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="🔍 Search suppliers by name or contact..." />
+            <button class="btn btn-primary" onclick="searchSuppliers()"><i class="fas fa-search"></i> Search</button>
+            <button class="btn btn-warning" onclick="refreshSuppliers()"><i class="fas fa-sync"></i> Reset</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="supplierTable">
+                <tr><td colspan="6" class="empty">⏳ Loading...</td></tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- ===== ADD SUPPLIER MODAL ===== -->
+    <div class="modal" id="supplierModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <h2>➕ Add New Supplier</h2>
+            <form id="supplierForm">
+                <input type="text" id="supplierName" placeholder="Company Name" required>
+                <input type="text" id="supplierContact" placeholder="Contact Person">
+                <input type="email" id="supplierEmail" placeholder="Email">
+                <input type="text" id="supplierPhone" placeholder="Phone">
+                <textarea id="supplierAddress" placeholder="Address" rows="2"></textarea>
+                <button type="submit" class="btn-primary">Add Supplier</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== EDIT SUPPLIER MODAL ===== -->
+    <div class="modal" id="editSupplierModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            <h2>✏️ Edit Supplier</h2>
+            <form id="editSupplierForm">
+                <input type="hidden" id="editSupplierId">
+                <input type="text" id="editSupplierName" placeholder="Company Name" required>
+                <input type="text" id="editSupplierContact" placeholder="Contact Person">
+                <input type="email" id="editSupplierEmail" placeholder="Email">
+                <input type="text" id="editSupplierPhone" placeholder="Phone">
+                <textarea id="editSupplierAddress" placeholder="Address" rows="2"></textarea>
+                <button type="submit" class="btn-primary">Update Supplier</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // LOAD SUPPLIERS
+        // ============================================
+        async function loadSuppliers() {
+            try {
+                const response = await fetch('/api/suppliers');
+                const suppliers = await response.json();
+                displaySuppliers(suppliers);
+            } catch (error) {
+                console.error('Error loading suppliers:', error);
+                document.getElementById('supplierTable').innerHTML = '<tr><td colspan="6" class="empty">❌ Error loading suppliers</td></tr>';
+            }
+        }
+
+        function displaySuppliers(suppliers) {
+            const tbody = document.getElementById('supplierTable');
+            if (!suppliers || suppliers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty">🏢 No suppliers found. Add your first supplier!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = suppliers.map(s => `
+                <tr>
+                    <td>#${s.id}</td>
+                    <td><strong>${escapeHtml(s.name)}</strong></td>
+                    <td>${escapeHtml(s.contact_person || '-')}</td>
+                    <td>${escapeHtml(s.email || '-')}</td>
+                    <td>${escapeHtml(s.phone || '-')}</td>
+                    <td class="actions">
+                        <button class="btn-edit" onclick="editSupplier(${s.id})"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn-danger" onclick="deleteSupplier(${s.id})"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================
+        // MODAL - ADD
+        // ============================================
+        function openModal() {
+            document.getElementById('supplierModal').classList.add('show');
+            document.getElementById('supplierForm').reset();
+        }
+
+        function closeModal() {
+            document.getElementById('supplierModal').classList.remove('show');
+        }
+
+        // ============================================
+        // ADD SUPPLIER
+        // ============================================
+        document.getElementById('supplierForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('supplierName').value.trim(),
+                contact_person: document.getElementById('supplierContact').value.trim(),
+                email: document.getElementById('supplierEmail').value.trim(),
+                phone: document.getElementById('supplierPhone').value.trim(),
+                address: document.getElementById('supplierAddress').value.trim()
+            };
+
+            try {
+                const response = await fetch('/api/suppliers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Supplier added successfully!');
+                    closeModal();
+                    loadSuppliers();
+                } else {
+                    alert('❌ Failed to add supplier');
+                }
+            } catch (error) {
+                alert('❌ Error adding supplier');
+            }
+        });
+
+        // ============================================
+        // EDIT SUPPLIER
+        // ============================================
+        function editSupplier(id) {
+            fetch('/api/suppliers/' + id)
+                .then(function(res) {
+                    if (!res.ok) throw new Error('Supplier not found');
+                    return res.json();
+                })
+                .then(function(supplier) {
+                    document.getElementById('editSupplierId').value = supplier.id;
+                    document.getElementById('editSupplierName').value = supplier.name || '';
+                    document.getElementById('editSupplierContact').value = supplier.contact_person || '';
+                    document.getElementById('editSupplierEmail').value = supplier.email || '';
+                    document.getElementById('editSupplierPhone').value = supplier.phone || '';
+                    document.getElementById('editSupplierAddress').value = supplier.address || '';
+                    document.getElementById('editSupplierModal').classList.add('show');
+                })
+                .catch(function(e) {
+                    alert('❌ Error fetching supplier: ' + e.message);
+                });
+        }
+
+        function closeEditModal() {
+            document.getElementById('editSupplierModal').classList.remove('show');
+        }
+
+        // ============================================
+        // UPDATE SUPPLIER
+        // ============================================
+        document.getElementById('editSupplierForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editSupplierId').value;
+            const data = {
+                name: document.getElementById('editSupplierName').value.trim(),
+                contact_person: document.getElementById('editSupplierContact').value.trim(),
+                email: document.getElementById('editSupplierEmail').value.trim(),
+                phone: document.getElementById('editSupplierPhone').value.trim(),
+                address: document.getElementById('editSupplierAddress').value.trim()
+            };
+            
+            if (!data.name) {
+                alert('❌ Company name is required');
+                return;
+            }
+            
+            fetch('/api/suppliers/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.success) {
+                    alert('✅ Supplier updated successfully!');
+                    closeEditModal();
+                    loadSuppliers();
+                } else {
+                    alert('❌ ' + (result.message || 'Update failed'));
+                }
+            })
+            .catch(function(e) {
+                alert('❌ Error: ' + e.message);
+            });
+        });
+
+        // ============================================
+        // DELETE SUPPLIER
+        // ============================================
+        function deleteSupplier(id) {
+            if (!confirm('⚠️ Delete supplier #' + id + '?')) return;
+            if (!confirm('⚠️ Are you sure? This action cannot be undone!')) return;
+            
+            fetch('/api/suppliers/' + id, {
+                method: 'DELETE'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    alert('✅ Supplier deleted successfully!');
+                    loadSuppliers();
+                } else {
+                    alert('❌ ' + (data.message || 'Delete failed'));
+                }
+            })
+            .catch(function(e) {
+                alert('❌ Error: ' + e.message);
+            });
+        }
+
+        // ============================================
+        // SEARCH SUPPLIERS
+        // ============================================
+        async function searchSuppliers() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { 
+                loadSuppliers(); 
+                return; 
+            }
+            try {
+                const response = await fetch(`/api/suppliers/search?q=${encodeURIComponent(query)}`);
+                const suppliers = await response.json();
+                displaySuppliers(suppliers);
+            } catch (error) {
+                alert('❌ Search failed');
+            }
+        }
+
+        // ============================================
+        // REFRESH / RESET
+        // ============================================
+        function refreshSuppliers() {
+            document.getElementById('searchInput').value = '';
+            loadSuppliers();
+        }
+
+        // ============================================
+        // ENTER KEY SUPPORT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchSuppliers();
+                }
+            });
+        });
+
+        // ============================================
+        // CLOSE MODAL ON OUTSIDE CLICK
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById('supplierModal');
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            var editModal = document.getElementById('editSupplierModal');
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+        });
+
+        // ============================================
+        // HELPER
+        // ============================================
+        function escapeHtml(text) {
+            if (!text) return '-';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        // ============================================
+        // HIGHLIGHT ACTIVE MENU
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .menu-item').forEach(function(item) {
+                var href = item.getAttribute('href');
+                if (href && currentPath.includes(href)) {
+                    item.classList.add('active');
+                }
+                if (currentPath === '/dashboard' && href === '/dashboard') {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            var isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ============================================
+        // LOAD SUPPLIERS ON PAGE LOAD
+        // ============================================
+        document.addEventListener('DOMContentLoaded', loadSuppliers);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Product - Nettech Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span { color: #0F2A5F; }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        .form-card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-card .form-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+        .form-card .form-title i { color: #0F2A5F; margin-right: 10px; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background: #0F2A5F; color: #FFFFFF; }
+        .btn-primary:hover { background: #1a3a7a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15,42,95,0.25); }
+        .btn-success { background: #10b981; color: #FFFFFF; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); }
+        .btn-secondary { background: #f3f4f6; color: #1a1a2e; border: 1px solid #e5e7eb; }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .error-msg {
+            color: #ef4444;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main { background: #0a0e1a; }
+        body.dark-mode .form-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
+        body.dark-mode .form-card .form-title { color: #fff; }
+        body.dark-mode .form-group label { color: rgba(255,255,255,0.6); }
+        body.dark-mode .form-group input, .form-group select, .form-group textarea {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .header h1 { color: #fff; }
+        body.dark-mode .header h1 span { color: #667eea; }
+        body.dark-mode .header a { background: rgba(255,255,255,0.05); color: #fff; }
+        body.dark-mode .header a:hover { background: rgba(255,255,255,0.1); }
+
+        @media (max-width: 768px) {
+            .main { margin-left: 200px; padding: 20px; }
+        }
+        @media (max-width: 480px) {
+            .main { margin-left: 0; padding: 16px; }
+            .form-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    {% include 'sidebar.html' %}
+
+    <div class="main">
+
+        <div class="header">
+            <h1>✏️ <span>Edit Product</span></h1>
+            <a href="/products"><i class="fas fa-arrow-left"></i> Back to Products</a>
+        </div>
+
+        <div class="form-card">
+            <div class="form-title"><i class="fas fa-box"></i> Edit Product Details</div>
+            
+            <div id="loadingMessage" class="loading">⏳ Loading product data...</div>
+            
+            <form id="editProductForm" style="display:none;">
+                <input type="hidden" id="productId">
+                
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="productName" required placeholder="Enter product name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="productCategory" placeholder="e.g., Electronics, Furniture">
+                </div>
+                
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="productQuantity" required min="0" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Price (₹) *</label>
+                    <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label>Supplier</label>
+                    <select id="productSupplier">
+                        <option value="">Select Supplier</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reorder Level</label>
+                    <input type="number" id="productReorder" value="5" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="productDescription" placeholder="Optional description">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Update Product</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/products'"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // GET PRODUCT ID FROM URL
+        // ============================================
+        const productId = {{ product_id }};
+        console.log('📦 Product ID:', productId);
+
+        // ============================================
+        // LOAD PRODUCT DATA
+        // ============================================
+        async function loadProduct() {
+            try {
+                console.log('📦 Loading product:', productId);
+                const response = await fetch('/api/products/' + productId);
+                
+                if (!response.ok) {
+                    throw new Error('Product not found (Status: ' + response.status + ')');
+                }
+                
+                const product = await response.json();
+                console.log('📦 Product data:', product);
+                
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name || '';
+                document.getElementById('productCategory').value = product.category || '';
+                document.getElementById('productQuantity').value = product.quantity || 0;
+                document.getElementById('productPrice').value = product.price || 0;
+                document.getElementById('productReorder').value = product.reorder_level || 5;
+                document.getElementById('productDescription').value = product.description || '';
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('editProductForm').style.display = 'block';
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('loadingMessage').innerHTML = '❌ Error loading product: ' + error.message;
+            }
+        }
+
+        // ============================================
+        // LOAD SUPPLIERS
+        // ============================================
+        async function loadSuppliers() {
+            try {
+                const response = await fetch('/api/suppliers');
+                const suppliers = await response.json();
+                const select = document.getElementById('productSupplier');
+                
+                suppliers.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = s.name;
+                    select.appendChild(option);
+                });
+                
+                console.log('✅ Suppliers loaded:', suppliers.length);
+            } catch (error) {
+                console.error('❌ Error loading suppliers:', error);
+            }
+        }
+
+        // ============================================
+        // UPDATE PRODUCT
+        // ============================================
+        document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                name: document.getElementById('productName').value.trim(),
+                category: document.getElementById('productCategory').value.trim(),
+                quantity: parseInt(document.getElementById('productQuantity').value) || 0,
+                price: parseFloat(document.getElementById('productPrice').value) || 0,
+                supplier_id: parseInt(document.getElementById('productSupplier').value) || 0,
+                reorder_level: parseInt(document.getElementById('productReorder').value) || 5,
+                description: document.getElementById('productDescription').value.trim()
+            };
+            
+            console.log('📦 Updating product:', data);
+            
+            if (!data.name) {
+                alert('❌ Product name is required');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/products/' + productId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('📦 Update result:', result);
+                
+                if (result.success) {
+                    alert('✅ Product updated successfully!');
+                    window.location.href = '/products';
+                } else {
+                    alert('❌ ' + (result.message || 'Update failed'));
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ============================================
+        // INIT - LOAD DATA
+        // ============================================
+        loadProduct();
+        loadSuppliers();
+    </script>
+
+</body>
+</html>

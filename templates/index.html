@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockNova Inventory - Smart Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: #0a0a1a;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 30%, #2d1b69 60%, #1a1a3e 80%, #0a0a1a 100%);
+            overflow: hidden;
+        }
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: orbFloat 15s ease-in-out infinite;
+        }
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: #667eea;
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: #764ba2;
+            bottom: -150px;
+            left: -150px;
+            animation-delay: 3s;
+        }
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: #f093fb;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 6s;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, 30px) scale(0.9); }
+            75% { transform: translate(30px, -20px) scale(1.05); }
+        }
+
+        /* ============ PARTICLES ============ */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 20s infinite;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .navbar.scrolled {
+            background: rgba(10, 10, 26, 0.95);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+        .nav-brand .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 5px 40px rgba(102, 126, 234, 0.6); }
+        }
+        .nav-brand .brand-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+        .nav-brand .brand-text span {
+            color: #667eea;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover {
+            color: white;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .btn-outline:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-gradient:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 35px rgba(102, 126, 234, 0.6);
+        }
+        .btn-white {
+            background: white;
+            color: #1a1a3e;
+        }
+        .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.2);
+        }
+
+       
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 50px 50px;
+            position: relative;
+        }
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+        .hero-content {
+            color: white;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 500;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .hero-badge i {
+            margin-right: 8px;
+        }
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+        .hero-title .highlight {
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-title .highlight-2 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+            max-width: 500px;
+            margin-bottom: 35px;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+
+        /* ============ HERO VISUAL ============ */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dashboard-preview {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .dashboard-preview .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .preview-dots {
+            display: flex;
+            gap: 8px;
+        }
+        .preview-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: block;
+        }
+        .preview-dots .red { background: #ff5f57; }
+        .preview-dots .yellow { background: #ffbd2e; }
+        .preview-dots .green { background: #28c840; }
+        .preview-title {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .preview-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        .preview-card:hover {
+            background: rgba(255,255,255,0.08);
+            transform: scale(1.02);
+        }
+        .preview-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .preview-card h4 {
+            color: white;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+        .preview-card p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+        }
+        .preview-card .value {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .float-badge {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            color: white;
+            font-weight: 500;
+            font-size: 0.9rem;
+            animation: floatBadge 4s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .float-badge i { margin-right: 8px; }
+        .badge-1 { top: -20px; right: -20px; animation-delay: 0s; }
+        .badge-2 { bottom: 20px; left: -30px; animation-delay: 1.5s; }
+        .badge-3 { bottom: -10px; right: -10px; animation-delay: 3s; }
+        @keyframes floatBadge {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+    
+        .features-section {
+            padding: 80px 50px;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header .tag {
+            display: inline-block;
+            padding: 6px 18px;
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 50px;
+            color: #667eea;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: white;
+        }
+        .section-header h2 span {
+            background: linear-gradient(135deg, #667eea, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .section-header p {
+            color: rgba(255,255,255,0.5);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 15px auto 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 35px 30px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        .feature-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .icon-purple { background: rgba(102, 126, 234, 0.15); color: #667eea; }
+        .icon-pink { background: rgba(240, 147, 251, 0.15); color: #f093fb; }
+        .icon-orange { background: rgba(245, 87, 108, 0.15); color: #f5576c; }
+        .icon-green { background: rgba(40, 200, 64, 0.15); color: #28c840; }
+        .icon-blue { background: rgba(0, 200, 255, 0.15); color: #00c8ff; }
+        .icon-yellow { background: rgba(255, 189, 46, 0.15); color: #ffbd2e; }
+        .feature-card h3 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .feature-card p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        .feature-card .learn-more {
+            display: inline-block;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+        .feature-card .learn-more i {
+            transition: transform 0.3s;
+            margin-left: 5px;
+        }
+        .feature-card:hover .learn-more i {
+            transform: translateX(5px);
+        }
+
+
+        .testimonials-section {
+            padding: 80px 50px;
+        }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .testimonial-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+        .testimonial-card .stars {
+            color: #ffbd2e;
+            margin-bottom: 15px;
+        }
+        .testimonial-card blockquote {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            line-height: 1.8;
+            font-style: italic;
+        }
+        .testimonial-card .author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .testimonial-card .author .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .testimonial-card .author .info h4 {
+            color: white;
+            font-size: 0.95rem;
+        }
+        .testimonial-card .author .info p {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+        }
+
+        
+        .cta-section {
+            padding: 80px 50px;
+            text-align: center;
+        }
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            border-radius: 30px;
+            padding: 60px;
+            backdrop-filter: blur(20px);
+        }
+        .cta-box h2 {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .cta-box p {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        .cta-box .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+    
+        .footer {
+            padding: 40px 50px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer p {
+            color: rgba(255,255,255,0.3);
+            font-size: 0.9rem;
+        }
+        .footer .social {
+            display: flex;
+            gap: 15px;
+        }
+        .footer .social a {
+            color: rgba(255,255,255,0.3);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 1.2rem;
+        }
+        .footer .social a:hover {
+            color: #667eea;
+        }
+
+    
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 3rem; }
+            .hero-container { grid-template-columns: 1fr; text-align: center; }
+            .hero-subtitle { margin: 0 auto 35px; }
+            .hero-buttons { justify-content: center; }
+            .hero-stats { justify-content: center; }
+            .dashboard-preview { max-width: 500px; }
+        }
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+            .nav-links { gap: 15px; flex-wrap: wrap; justify-content: center; }
+            .nav-buttons { gap: 8px; }
+            .nav-buttons .btn { padding: 8px 18px; font-size: 0.85rem; }
+            .hero { padding: 120px 20px 50px; }
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .hero-stats { gap: 20px; flex-wrap: wrap; }
+            .stat-number { font-size: 1.5rem; }
+            .features-section { padding: 60px 20px; }
+            .section-header h2 { font-size: 2rem; }
+            .preview-grid { grid-template-columns: 1fr; }
+            .float-badge { display: none; }
+            .cta-box { padding: 30px 20px; }
+            .cta-box h2 { font-size: 1.8rem; }
+            .footer { flex-direction: column; text-align: center; padding: 30px 20px; }
+            .testimonials-section { padding: 60px 20px; }
+        }
+        @media (max-width: 480px) {
+            .nav-brand .brand-text { font-size: 1.1rem; }
+            .nav-brand .logo-icon { width: 35px; height: 35px; font-size: 1.2rem; }
+            .hero-title { font-size: 1.8rem; }
+            .hero-buttons .btn { width: 100%; justify-content: center; }
+            .features-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+  
+    <div class="particles" id="particles"></div>
+
+
+    <nav class="navbar" id="navbar">
+        <a href="/" class="nav-brand">
+            <div class="logo-icon">📦</div>
+            <span class="brand-text">StockNova<span>Inventory</span></span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#testimonials">Testimonials</a>
+            <div class="nav-buttons">
+                <a href="/login" class="btn btn-outline">Login</a>
+                <a href="/signup" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+  
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-rocket"></i> 🚀 Next-Gen Inventory Management
+                </div>
+                <h1 class="hero-title">
+                    Smart Way to<br>
+                    <span class="highlight">Manage Your</span><br>
+                    <span class="highlight-2">Inventory</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Track products, manage suppliers, generate sales reports, 
+                    and grow your business with our powerful inventory management system.
+                </p>
+                <div class="hero-buttons">
+                    <a href="/signup" class="btn btn-gradient">
+                        <i class="fas fa-user-plus"></i> Start Free Trial
+                    </a>
+                    <a href="#features" class="btn btn-white">
+                        <i class="fas fa-play-circle"></i> Explore Features
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Products Managed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="dashboard-preview">
+                    <div class="preview-header">
+                        <div class="preview-dots">
+                            <span class="red"></span>
+                            <span class="yellow"></span>
+                            <span class="green"></span>
+                        </div>
+                        <span class="preview-title">📊 Dashboard Overview</span>
+                    </div>
+                    <div class="preview-grid">
+                        <div class="preview-card">
+                            <div class="icon">📦</div>
+                            <h4>Total Products</h4>
+                            <p>Active inventory items</p>
+                            <div class="value">1,284</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="icon">🏢</div>
+                            <h4>Suppliers</h4>
+                            <p>Active suppliers</p>
+                            <div class="value">48</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="icon">📊</div>
+                            <h4>Today's Sales</h4>
+                            <p>Revenue today</p>
+                            <div class="value">₹45,230</div>
+                        </div>
+                        <div class="preview-card">
+                            <div class="icon">⚠️</div>
+                            <h4>Low Stock</h4>
+                            <p>Items to reorder</p>
+                            <div class="value" style="color: #f5576c;">12</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="float-badge badge-1">
+                    <i class="fas fa-chart-line" style="color: #667eea;"></i> +23% Growth
+                </div>
+                <div class="float-badge badge-2">
+                    <i class="fas fa-check-circle" style="color: #28c840;"></i> Real-time Sync
+                </div>
+                <div class="float-badge badge-3">
+                    <i class="fas fa-shield-alt" style="color: #f093fb;"></i> Secure
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <div class="section-header">
+            <div class="tag">✨ Features</div>
+            <h2>Everything You Need to <span>Manage Inventory</span></h2>
+            <p>Powerful tools to streamline your inventory operations and boost efficiency</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon icon-purple">📦</div>
+                <h3>Product Management</h3>
+                <p>Add, edit, delete, and search products with real-time stock tracking and automated reorder alerts.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="icon icon-pink">🏢</div>
+                <h3>Supplier Management</h3>
+                <p>Maintain supplier database, track contact details, and manage purchase relationships efficiently.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="icon icon-orange">📊</div>
+                <h3>Sales Reports</h3>
+                <p>Generate detailed sales reports, track revenue, and gain insights with interactive dashboards.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="icon icon-green">🔄</div>
+                <h3>Real-time Updates</h3>
+                <p>Automatic stock updates with every sale, ensuring accurate inventory levels at all times.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="icon icon-blue">🔒</div>
+                <h3>Secure Authentication</h3>
+                <p>Role-based access control with secure login, protecting your sensitive business data.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="feature-card">
+                <div class="icon icon-yellow">📱</div>
+                <h3>Responsive Design</h3>
+                <p>Access your inventory system from any device - desktop, tablet, or mobile phone.</p>
+                <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-header">
+            <div class="tag">💬 Testimonials</div>
+            <h2>What Our <span>Users Say</span></h2>
+            <p>Join thousands of satisfied users who trust our inventory management system</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <blockquote>"This system has completely transformed how we manage our inventory. Stock tracking has become effortless

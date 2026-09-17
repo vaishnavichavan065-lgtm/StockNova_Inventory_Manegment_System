@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - StockNova Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span {
+            color: #0F2A5F;
+        }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        /* ===== PROFILE CARD ===== */
+        .profile-container {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ===== PROFILE SIDEBAR ===== */
+        .profile-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+            position: sticky;
+            top: 20px;
+        }
+        .profile-avatar {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: #0F2A5F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #FFFFFF;
+            overflow: hidden;
+            border: 4px solid #e5e7eb;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-avatar .upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #0F2A5F;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .profile-avatar .upload-btn:hover {
+            background: #1a3a7a;
+            transform: scale(1.05);
+        }
+        .profile-avatar .upload-btn input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .profile-card .name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .profile-card .role {
+            display: inline-block;
+            padding: 4px 16px;
+            background: rgba(15,42,95,0.08);
+            color: #0F2A5F;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 8px 0 12px;
+        }
+        .profile-card .email {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .profile-card .member-since {
+            color: #9ca3af;
+            font-size: 12px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .profile-stats .stat {
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .profile-stats .stat .number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F2A5F;
+        }
+        .profile-stats .stat .label {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* ===== PROFILE CONTENT ===== */
+        .profile-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .info-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border: 1px solid #e5e7eb;
+        }
+        .info-card .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-card .card-title i {
+            color: #0F2A5F;
+        }
+        .info-card .card-title .edit-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #0F2A5F;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 6px;
+            background: rgba(15,42,95,0.06);
+            transition: 0.3s;
+        }
+        .info-card .card-title .edit-btn:hover {
+            background: rgba(15,42,95,0.12);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px 30px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-item .label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .info-item .value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a2e;
+            padding: 6px 0;
+        }
+        .info-item .value .edit-input {
+            display: none;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            background: #f9fafb;
+        }
+        .info-item .value .edit-input:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+        .info-item .value.show-edit .edit-input {
+            display: block;
+        }
+        .info-item .value.show-edit .display-text {
+            display: none;
+        }
+
+        .btn-save {
+            padding: 10px 24px;
+            background: #0F2A5F;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 10px;
+        }
+        .btn-save:hover {
+            background: #1a3a7a;
+            transform: translateY(-2px);
+        }
+        .btn-cancel {
+            padding: 10px 24px;
+            background: #f3f4f6;
+            color: #1a1a2e;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        /* ===== PASSWORD CHANGE ===== */
+        .password-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .password-form .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .password-form .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .password-form .form-group input {
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+        .password-form .form-group input:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+
+        .password-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main {
+            background: #0a0e1a;
+        }
+        body.dark-mode .header h1 {
+            color: #fff;
+        }
+        body.dark-mode .header h1 span {
+            color: #667eea;
+        }
+        body.dark-mode .header a {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        body.dark-mode .header a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode .profile-card,
+        body.dark-mode .info-card {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .profile-card .name {
+            color: #fff;
+        }
+        body.dark-mode .profile-card .role {
+            background: rgba(102,126,234,0.15);
+            color: #667eea;
+        }
+        body.dark-mode .profile-card .email {
+            color: rgba(255,255,255,0.5);
+        }
+        body.dark-mode .profile-card .member-since {
+            border-color: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .profile-stats .stat {
+            background: rgba(255,255,255,0.03);
+        }
+        body.dark-mode .profile-stats .stat .number {
+            color: #667eea;
+        }
+        body.dark-mode .profile-stats .stat .label {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .info-card .card-title {
+            color: #fff;
+        }
+        body.dark-mode .info-card .card-title i {
+            color: #667eea;
+        }
+        body.dark-mode .info-item .label {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .info-item .value {
+            color: #fff;
+        }
+        body.dark-mode .info-item .value .edit-input {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .password-form .form-group input {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .password-form .form-group label {
+            color: rgba(255,255,255,0.6);
+        }
+        body.dark-mode .btn-cancel {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            border-color: rgba(255,255,255,0.08);
+        }
+        body.dark-mode .btn-cancel:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode .profile-avatar {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 992px) {
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+            .profile-card {
+                position: relative;
+                top: 0;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .password-form {
+                grid-template-columns: 1fr;
+            }
+            .password-actions {
+                grid-column: 1;
+            }
+        }
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .profile-card {
+                padding: 20px;
+            }
+            .info-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    {% include 'sidebar.html' %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main">
+
+        <div class="header">
+            <h1>👤 <span>My Profile</span></h1>
+            <a href="/dashboard"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+
+        <div class="profile-container">
+
+            <!-- ===== PROFILE SIDEBAR ===== -->
+            <div class="profile-card">
+                <div class="profile-avatar" id="avatarContainer">
+                    <img id="profileImage" src="" alt="Profile Photo" style="display:none;">
+                    <span id="avatarText">👤</span>
+                    <div class="upload-btn">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" id="photoUpload" accept="image/*">
+                    </div>
+                </div>
+                <div class="name" id="profileName">Loading...</div>
+                <div class="role" id="profileRole">Loading...</div>
+                <div class="email" id="profileEmail">Loading...</div>
+
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="number" id="statProducts">0</div>
+                        <div class="label">Products</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number" id="statSales">0</div>
+                        <div class="label">Sales</div>
+                    </div>
+                </div>
+
+                <div class="member-since" id="memberSince">Member since: Loading...</div>
+            </div>
+
+            <!-- ===== PROFILE CONTENT ===== -->
+            <div class="profile-content">
+
+                <!-- ===== PERSONAL INFORMATION ===== -->
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-user"></i> Personal Information
+                        <button class="edit-btn" onclick="toggleEdit()">
+                            <i class="fas fa-edit"></i> <span id="editBtnText">Edit</span>
+                        </button>
+                    </div>
+                    <div class="info-grid" id="infoGrid">
+                        <div class="info-item">
+                            <span class="label">Full Name</span>
+                            <div class="value" id="nameField">
+                                <span class="display-text" id="displayName">-</span>
+                                <input class="edit-input" id="editName" type="text" placeholder="Enter full name">
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Employee ID</span>
+                            <div class="value" id="employeeIdField">
+                                <span class="display-text" id="displayEmployeeId">-</span>
+                                <input class="edit-input" id="editEmployeeId" type="text" placeholder="Enter Employee ID">
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Email Address</span>
+                            <div class="value" id="emailField">
+                                <span class="display-text" id="displayEmail">-</span>
+                                <input class="edit-input" id="editEmail" type="email" placeholder="Enter email">
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Role</span>
+                            <div class="value">
+                                <span class="display-text" id="displayRole">-</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Member Since</span>
+                            <div class="value">
+                                <span class="display-text" id="displayMemberSince">-</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Status</span>
+                            <div class="value">
+                                <span class="display-text" id="displayStatus">
+                                    <span style="color:#10b981;">● Active</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="editActions" style="display:none; margin-top:15px;">
+                        <button class="btn-save" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+                        <button class="btn-cancel" onclick="cancelEdit()"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </div>
+
+                <!-- ===== CHANGE PASSWORD ===== -->
+                <div class="info-card">
+                    <div class="card-title">
+                        <i class="fas fa-lock"></i> Change Password
+                    </div>
+                    <form id="passwordForm" class="password-form">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" placeholder="Enter current password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" placeholder="Enter new password" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+                        </div>
+                        <div class="password-actions">
+                            <button type="submit" class="btn-save"><i class="fas fa-key"></i> Update Password</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- ===== ACCOUNT ACTIONS ===== -->
+                <div class="info-card" style="border-color: #ef4444;">
+                    <div class="card-title" style="color:#ef4444;">
+                        <i class="fas fa-exclamation-triangle"></i> Account Actions
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button onclick="logout()" class="btn-save" style="background:#ef4444;">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                        <button onclick="if(confirm('Are you sure?')){alert('Account deletion request sent to admin.');}" class="btn-cancel" style="border-color:#ef4444; color:#ef4444;">
+                            <i class="fas fa-trash"></i> Delete Account
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // GLOBALS
+        // ============================================
+        let userData = {};
+        let isEditing = false;
+
+        // ============================================
+        // LOAD PROFILE DATA
+        // ============================================
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/current-user');
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    userData = data.user;
+                    displayProfile(userData);
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // ============================================
+        // DISPLAY PROFILE
+        // ============================================
+        function displayProfile(user) {
+            const fullName = user.full_name || user.username || 'User';
+            const username = user.username || '';
+            const email = user.email || 'user@email.com';
+            const role = user.role || 'staff';
+            const memberSince = user.member_since || '2026';
+            const employeeId = user.employee_id || 'EMP-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+
+            // Profile Card
+            document.getElementById('profileName').textContent = fullName;
+            document.getElementById('profileRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            document.getElementById('profileEmail').textContent = email;
+            document.getElementById('memberSince').textContent = 'Member since: ' + memberSince;
+
+            // Info Grid
+            document.getElementById('displayName').textContent = fullName;
+            document.getElementById('displayEmployeeId').textContent = employeeId;
+            document.getElementById('displayEmail').textContent = email;
+            document.getElementById('displayRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+            document.getElementById('displayMemberSince').textContent = memberSince;
+
+            // Edit Inputs
+            document.getElementById('editName').value = fullName;
+            document.getElementById('editEmployeeId').value = employeeId;
+            document.getElementById('editEmail').value = email;
+
+            // Stats
+            loadStats();
+
+            // Avatar
+            if (user.profile_photo) {
+                document.getElementById('profileImage').src = user.profile_photo;
+                document.getElementById('profileImage').style.display = 'block';
+                document.getElementById('avatarText').style.display = 'none';
+            } else {
+                document.getElementById('avatarText').textContent = fullName.charAt(0).toUpperCase();
+                document.getElementById('profileImage').style.display = 'none';
+                document.getElementById('avatarText').style.display = 'block';
+            }
+        }
+
+        // ============================================
+        // LOAD STATS
+        // ============================================
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                document.getElementById('statProducts').textContent = stats.total_products || 0;
+                document.getElementById('statSales').textContent = stats.today_sales || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // ============================================
+        // TOGGLE EDIT
+        // ============================================
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const fields = ['nameField', 'employeeIdField', 'emailField'];
+            
+            fields.forEach(id => {
+                document.getElementById(id).classList.toggle('show-edit');
+            });
+
+            document.getElementById('editActions').style.display = isEditing ? 'block' : 'none';
+            document.getElementById('editBtnText').textContent = isEditing ? 'Cancel' : 'Edit';
+            
+            if (!isEditing) {
+                cancelEdit();
+            }
+        }
+
+        // ============================================
+        // CANCEL EDIT
+        // ============================================
+        function cancelEdit() {
+            document.getElementById('editName').value = document.getElementById('displayName').textContent;
+            document.getElementById('editEmployeeId').value = document.getElementById('displayEmployeeId').textContent;
+            document.getElementById('editEmail').value = document.getElementById('displayEmail').textContent;
+            
+            document.querySelectorAll('.value.show-edit').forEach(el => {
+                el.classList.remove('show-edit');
+            });
+            document.getElementById('editActions').style.display = 'none';
+            document.getElementById('editBtnText').textContent = 'Edit';
+            isEditing = false;
+        }
+
+        // ============================================
+        // SAVE PROFILE
+        // ============================================
+        async function saveProfile() {
+            const data = {
+                full_name: document.getElementById('editName').value.trim(),
+                employee_id: document.getElementById('editEmployeeId').value.trim(),
+                email: document.getElementById('editEmail').value.trim()
+            };
+
+            if (!data.full_name) {
+                alert('❌ Full name is required');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Profile updated successfully!');
+                    document.getElementById('displayName').textContent = data.full_name;
+                    document.getElementById('displayEmployeeId').textContent = data.employee_id;
+                    document.getElementById('displayEmail').textContent = data.email;
+                    document.getElementById('profileName').textContent = data.full_name;
+                    document.getElementById('profileEmail').textContent = data.email;
+                    toggleEdit();
+                } else {
+                    alert('❌ ' + (result.message || 'Update failed'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // ============================================
+        // CHANGE PASSWORD
+        // ============================================
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (!current || !newPass || !confirm) {
+                alert('❌ All fields are required');
+                return;
+            }
+
+            if (newPass.length < 6) {
+                alert('❌ New password must be at least 6 characters');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('❌ Passwords do not match');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: current,
+                        new_password: newPass
+                    })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('✅ Password changed successfully!');
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    alert('❌ ' + (result.message || 'Password change failed'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        // ============================================
+        // PROFILE PHOTO UPLOAD
+        // ============================================
+        document.getElementById('photoUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 2 * 1024 * 1024) {
+                alert('❌ File size must be less than 2MB');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            fetch('/api/profile/photo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                    alert('✅ Profile photo updated!');
+                    document.getElementById('profileImage').src = result.photo_url + '?' + Date.now();
+                    document.getElementById('profileImage').style.display = 'block';
+                    document.getElementById('avatarText').style.display = 'none';
+                } else {
+                    alert('❌ ' + (result.message || 'Upload failed'));
+                }
+            })
+            .catch(error => {
+                alert('❌ Error uploading photo: ' + error.message);
+            });
+
+            // Reset input
+            this.value = '';
+        });
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+
+</body>
+</html>

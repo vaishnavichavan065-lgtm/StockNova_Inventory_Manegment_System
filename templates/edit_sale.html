@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Sale - Nettech Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span { color: #0F2A5F; }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        .form-card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-card .form-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+        .form-card .form-title i { color: #0F2A5F; margin-right: 10px; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background: #0F2A5F; color: #FFFFFF; }
+        .btn-primary:hover { background: #1a3a7a; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15,42,95,0.25); }
+        .btn-success { background: #10b981; color: #FFFFFF; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); }
+        .btn-secondary { background: #f3f4f6; color: #1a1a2e; border: 1px solid #e5e7eb; }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .error-msg {
+            color: #ef4444;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main { background: #0a0e1a; }
+        body.dark-mode .form-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); }
+        body.dark-mode .form-card .form-title { color: #fff; }
+        body.dark-mode .form-group label { color: rgba(255,255,255,0.6); }
+        body.dark-mode .form-group input, .form-group select, .body.dark-mode .form-group textarea {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .header h1 { color: #fff; }
+        body.dark-mode .header h1 span { color: #667eea; }
+        body.dark-mode .header a { background: rgba(255,255,255,0.05); color: #fff; }
+        body.dark-mode .header a:hover { background: rgba(255,255,255,0.1); }
+
+        @media (max-width: 768px) {
+            .main { margin-left: 200px; padding: 20px; }
+        }
+        @media (max-width: 480px) {
+            .main { margin-left: 0; padding: 16px; }
+            .form-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    {% include 'sidebar.html' %}
+
+    <div class="main">
+
+        <div class="header">
+            <h1>✏️ <span>Edit Sale</span></h1>
+            <a href="/sales-report"><i class="fas fa-arrow-left"></i> Back to Sales</a>
+        </div>
+
+        <div class="form-card">
+            <div class="form-title"><i class="fas fa-shopping-cart"></i> Edit Sale Details</div>
+            
+            <div id="loadingMessage" class="loading">⏳ Loading sale data...</div>
+            
+            <form id="editSaleForm" style="display:none;">
+                <input type="hidden" id="saleId">
+                
+                <div class="form-group">
+                    <label>Product</label>
+                    <input type="text" id="saleProduct" readonly style="background:#e5e7eb; cursor:not-allowed;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="saleQuantity" required min="1" placeholder="Enter quantity">
+                </div>
+                
+                <div class="form-group">
+                    <label>Total Price (₹) *</label>
+                    <input type="number" id="salePrice" required min="0" step="0.01" placeholder="Enter total price">
+                </div>
+                
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text" id="saleCustomer" placeholder="Enter customer name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Customer Phone</label>
+                    <input type="text" id="salePhone" placeholder="Enter customer phone">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Update Sale</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/sales-report'"><i class="fas fa-times"></i> Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteSaleFromEdit()"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================
+        // GET SALE ID FROM URL
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const saleId = urlParams.get('id');
+        console.log('📦 Sale ID:', saleId);
+
+        // ============================================
+        // LOAD SALE DATA
+        // ============================================
+        async function loadSale() {
+            try {
+                if (!saleId) {
+                    document.getElementById('loadingMessage').innerHTML = '❌ No sale ID provided';
+                    return;
+                }
+
+                console.log('📦 Loading sale:', saleId);
+                const response = await fetch('/api/sales/' + saleId);
+                
+                if (!response.ok) {
+                    throw new Error('Sale not found (Status: ' + response.status + ')');
+                }
+                
+                const sale = await response.json();
+                console.log('📦 Sale data:', sale);
+                
+                document.getElementById('saleId').value = sale.id;
+                document.getElementById('saleProduct').value = sale.product_name || 'Unknown Product';
+                document.getElementById('saleQuantity').value = sale.quantity || 0;
+                document.getElementById('salePrice').value = sale.total_price || 0;
+                document.getElementById('saleCustomer').value = sale.customer_name || '';
+                document.getElementById('salePhone').value = sale.customer_phone || '';
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('editSaleForm').style.display = 'block';
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('loadingMessage').innerHTML = '❌ Error loading sale: ' + error.message;
+            }
+        }
+
+        // ============================================
+        // UPDATE SALE
+        // ============================================
+        document.getElementById('editSaleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                quantity: parseInt(document.getElementById('saleQuantity').value) || 0,
+                total_price: parseFloat(document.getElementById('salePrice').value) || 0,
+                customer_name: document.getElementById('saleCustomer').value.trim(),
+                customer_phone: document.getElementById('salePhone').value.trim()
+            };
+            
+            console.log('📦 Updating sale:', data);
+            
+            if (data.quantity <= 0) {
+                alert('❌ Quantity must be greater than 0');
+                return;
+            }
+            
+            if (data.total_price <= 0) {
+                alert('❌ Price must be greater than 0');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/sales/' + saleId, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('📦 Update result:', result);
+                
+                if (result.success) {
+                    alert('✅ Sale updated successfully!');
+                    window.location.href = '/sales-report';
+                } else {
+                    alert('❌ ' + (result.message || 'Update failed'));
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        });
+
+        // ============================================
+        // DELETE SALE FROM EDIT PAGE
+        // ============================================
+        function deleteSaleFromEdit() {
+            if (!confirm('⚠️ Delete Invoice INV-' + String(saleId).padStart(6, '0') + '?')) return;
+            if (!confirm('⚠️ Are you sure? This action cannot be undone!')) return;
+            
+            fetch('/api/sales/' + saleId, {
+                method: 'DELETE'
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.success) {
+                    alert('✅ Sale deleted successfully!');
+                    window.location.href = '/sales-report';
+                } else {
+                    alert('❌ ' + (result.message || 'Delete failed'));
+                }
+            })
+            .catch(function(e) {
+                alert('❌ Error: ' + e.message);
+            });
+        }
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ============================================
+        // INIT - LOAD DATA
+        // ============================================
+        loadSale();
+    </script>
+
+</body>
+</html>

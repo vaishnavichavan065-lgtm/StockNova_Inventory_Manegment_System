@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Product -StockNova Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span {
+            color: #0F2A5F;
+        }
+        .header .role {
+            background: rgba(15,42,95,0.08);
+            color: #0F2A5F;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        .form-card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 30px;
+            max-width: 650px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0F2A5F;
+            box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+            background: #FFFFFF;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+        .form-group select option {
+            background: #FFFFFF;
+            color: #1a1a2e;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: #0F2A5F;
+            color: #FFFFFF;
+        }
+        .btn-primary:hover {
+            background: #1a3a7a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15,42,95,0.25);
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #1a1a2e;
+            border: 1px solid #e5e7eb;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .msg {
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+        .msg.success {
+            background: rgba(16,185,129,0.10);
+            border: 1px solid rgba(16,185,129,0.20);
+            color: #10b981;
+            display: block;
+        }
+        .msg.error {
+            background: rgba(239,68,68,0.10);
+            border: 1px solid rgba(239,68,68,0.20);
+            color: #ef4444;
+            display: block;
+        }
+        .msg.info {
+            background: rgba(15,42,95,0.08);
+            border: 1px solid rgba(15,42,95,0.12);
+            color: #0F2A5F;
+            display: block;
+        }
+
+        .back-link {
+            color: #0F2A5F;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            .row {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        @media (max-width: 480px) {
+            .main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .form-card {
+                padding: 20px;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+        /* ===== DARK MODE ===== */
+
+body.dark-mode {
+    background: #0a0e1a;
+    color: #ffffff;
+}
+
+body.dark-mode .main {
+    background: #0a0e1a;
+}
+
+body.dark-mode .header h1,
+body.dark-mode th,
+body.dark-mode td {
+    color: #ffffff;
+}
+
+body.dark-mode table {
+    background: #111827;
+}
+
+body.dark-mode th {
+    background: #1f2937;
+    border-bottom: 1px solid #374151;
+}
+
+body.dark-mode td {
+    border-top: 1px solid #374151;
+}
+
+body.dark-mode tr:hover td {
+    background: #1f2937;
+}
+
+body.dark-mode .toolbar input {
+    background: #1f2937;
+    color: white;
+    border: 1px solid #374151;
+}
+
+body.dark-mode .header {
+    border-bottom: 1px solid #374151;
+}
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+   {% include 'sidebar.html' %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main">
+
+        <div class="header">
+            <h1>➕ <span>Add Product</span></h1>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <span class="role">🔑 Admin</span>
+                <a href="/products"><i class="fas fa-arrow-left"></i> Products</a>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div id="message" class="msg"></div>
+
+            <form id="productForm">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="name" placeholder="Enter product name" required>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <input type="text" id="category" placeholder="e.g., Electronics" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier</label>
+                        <select id="supplier_id">
+                            <option value="">Select Supplier</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Quantity *</label>
+                        <input type="number" id="quantity" placeholder="Enter quantity" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹) *</label>
+                        <input type="number" id="price" placeholder="Enter price" required min="0" step="0.01">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" placeholder="Product description..." rows="3"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</button>
+                    <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        console.log("✅ Add Product page loaded!");
+
+        // ===== LOAD SUPPLIERS =====
+        async function loadSuppliers() {
+            console.log("📋 Loading suppliers...");
+            const select = document.getElementById('supplier_id');
+            try {
+                const response = await fetch('/api/suppliers');
+                const suppliers = await response.json();
+                console.log("📋 Suppliers loaded:", suppliers.length);
+                suppliers.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s.id;
+                    option.textContent = s.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("❌ Error loading suppliers:", error);
+            }
+        }
+
+        // ===== ADD PRODUCT =====
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log("📦 Submitting form...");
+
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = 'msg';
+            messageDiv.style.display = 'none';
+
+            const data = {
+                name: document.getElementById('name').value.trim(),
+                category: document.getElementById('category').value.trim(),
+                quantity: parseInt(document.getElementById('quantity').value) || 0,
+                price: parseFloat(document.getElementById('price').value) || 0,
+                supplier_id: parseInt(document.getElementById('supplier_id').value) || 0,
+                description: document.getElementById('description').value.trim()
+            };
+
+            console.log("📦 Data being sent:", data);
+
+            try {
+                const response = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log("📦 Response:", result);
+
+                if (result.success) {
+                    messageDiv.className = 'msg success';
+                    messageDiv.textContent = '✅ ' + (result.message || 'Product added successfully!');
+                    messageDiv.style.display = 'block';
+                    document.getElementById('productForm').reset();
+
+                    // Redirect to products page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/products';
+                    }, 1500);
+                } else {
+                    messageDiv.className = 'msg error';
+                    messageDiv.textContent = '❌ ' + (result.message || 'Failed to add product');
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("❌ Error:", error);
+                messageDiv.className = 'msg error';
+                messageDiv.textContent = '❌ Network error: ' + error.message;
+                messageDiv.style.display = 'block';
+            }
+        });
+
+        // ===== LOGOUT =====
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        // ===== HIGHLIGHT ACTIVE MENU =====
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .menu-item').forEach(function(item) {
+                var href = item.getAttribute('href');
+                if (href && currentPath.includes(href)) {
+                    item.classList.add('active');
+                }
+                if (currentPath === '/dashboard' && href === '/dashboard') {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // ===== LOAD SUPPLIERS ON PAGE LOAD =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("🚀 DOM loaded, loading suppliers...");
+            loadSuppliers();
+        });
+    </script>
+<script>
+    // ===== LOAD DARK MODE PREFERENCE =====
+    document.addEventListener('DOMContentLoaded', function() {
+        var isDark = localStorage.getItem('darkMode') === 'true';
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            // Force dark mode on elements
+            document.querySelectorAll('.main, .main-content, .container, .card, .stat-card, .settings-card, .profile-card, .form-card, .table-wrap').forEach(function(el) {
+                el.style.background = '#0a0e1a';
+                el.style.borderColor = 'rgba(255,255,255,0.06)';
+            });
+            document.querySelectorAll('.header h1, .card-header h3, .stat-card .number, .profile-card .name, .setting-item .left .label').forEach(function(el) {
+                el.style.color = '#ffffff';
+            });
+        }
+    });
+</script>
+</body>
+</html>

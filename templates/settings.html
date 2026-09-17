@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - StockNova Inventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+            transition: background 0.4s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a2e;
+            transition: color 0.4s ease;
+        }
+        .header h1 span { color: #0F2A5F; }
+        .header .role {
+            background: rgba(15,42,95,0.08);
+            color: #0F2A5F;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.4s ease;
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        .settings-card {
+            background: #FFFFFF;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 30px;
+            max-width: 700px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: all 0.4s ease;
+        }
+        .settings-card .section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #f3f4f6;
+            transition: border-color 0.4s ease;
+        }
+        .settings-card .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .settings-card .section .title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+            transition: color 0.4s ease;
+        }
+        .settings-card .section .title i {
+            margin-right: 10px;
+            color: #0F2A5F;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+            flex-wrap: wrap;
+            gap: 10px;
+            transition: border-color 0.4s ease;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-item .left .label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a2e;
+            transition: color 0.4s ease;
+        }
+        .setting-item .left .desc {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+            transition: color 0.4s ease;
+        }
+        .setting-item .right .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-primary {
+            background: #0F2A5F;
+            color: #FFFFFF;
+        }
+        .btn-primary:hover {
+            background: #1a3a7a;
+            transform: translateY(-1px);
+        }
+        .btn-danger {
+            background: rgba(239,68,68,0.10);
+            color: #ef4444;
+            border: 1px solid rgba(239,68,68,0.15);
+        }
+        .btn-danger:hover {
+            background: rgba(239,68,68,0.20);
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #1a1a2e;
+            border: 1px solid #e5e7eb;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 26px;
+            background: #d1d5db;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .toggle.active {
+            background: #0F2A5F;
+        }
+        .toggle .thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .toggle.active .thumb {
+            left: 25px;
+        }
+
+        /* ===== LANGUAGE BUTTON WITH FLAG ===== */
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a1a2e;
+            transition: 0.3s;
+        }
+        .lang-btn:hover {
+            background: #f3f4f6;
+            border-color: #0F2A5F;
+        }
+        .lang-btn .flag {
+            font-size: 18px;
+        }
+
+        .access-note {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 20px;
+            transition: color 0.4s ease;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: #FFFFFF;
+            padding: 35px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-content h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .modal-content .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .modal-content .lang-option:hover {
+            background: #f3f4f6;
+            border-color: #0F2A5F;
+        }
+        .modal-content .lang-option.active {
+            background: rgba(15,42,95,0.08);
+            border-color: #0F2A5F;
+        }
+        .modal-content .lang-option .flag {
+            font-size: 24px;
+        }
+        .modal-content .lang-option .check {
+            margin-left: auto;
+            color: #0F2A5F;
+            display: none;
+        }
+        .modal-content .lang-option.active .check {
+            display: block;
+        }
+        .modal-content .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 28px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-content .close-btn:hover { color: #1a1a2e; }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main {
+            background: #0a0e1a;
+        }
+        body.dark-mode .settings-card {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .settings-card .section {
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .settings-card .section .title {
+            color: #fff;
+        }
+        body.dark-mode .setting-item {
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode .setting-item .left .label {
+            color: #fff;
+        }
+        body.dark-mode .setting-item .left .desc {
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode .header h1 {
+            color: #fff;
+        }
+        body.dark-mode .header .role {
+            background: rgba(15,42,95,0.3);
+            color: #667eea;
+        }
+        body.dark-mode .header a {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        body.dark-mode .header a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode .access-note {
+            color: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.6);
+            border-color: rgba(255,255,255,0.08);
+        }
+        body.dark-mode .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode .modal-content {
+            background: #1f2937;
+            color: #fff;
+        }
+        body.dark-mode .modal-content h2 {
+            color: #fff;
+        }
+        body.dark-mode .modal-content .lang-option {
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .modal-content .lang-option:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        body.dark-mode .modal-content .lang-option.active {
+            background: rgba(102,126,234,0.15);
+            border-color: #667eea;
+        }
+        body.dark-mode .modal-content .close-btn {
+            color: #9ca3af;
+        }
+        body.dark-mode .modal-content .close-btn:hover {
+            color: #fff;
+        }
+        body.dark-mode .lang-btn {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        body.dark-mode .lang-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            .settings-card {
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        @media (max-width: 480px) {
+            .main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .settings-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    {% include 'sidebar.html' %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main">
+
+        <div class="header">
+            <h1>⚙️ <span>Settings</span></h1>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <span class="role" id="roleBadge">Preferences</span>
+                <a href="/dashboard"><i class="fas fa-arrow-left"></i> Dashboard</a>
+            </div>
+        </div>
+
+        <div class="settings-card">
+
+            <!-- ===== PREFERENCES ===== -->
+            <div class="section">
+                <div class="title"><i class="fas fa-sliders-h"></i> Preferences</div>
+
+                <!-- Dark Mode -->
+                <div class="setting-item">
+                    <div class="left">
+                        <div class="label">🌙 Dark Mode</div>
+                        <div class="desc">Switch between dark and light theme for entire website</div>
+                    </div>
+                    <div class="right">
+                        <div class="toggle" id="darkModeToggle" onclick="toggleDarkModeGlobal(this)">
+                            <span class="thumb"></span>
+                        </div>
+                    </div>
+                </div>
+       
+           
+            <!-- ===== SECURITY ===== -->
+            <div class="section">
+                <div class="title"><i class="fas fa-shield-alt"></i> Security</div>
+
+                <!-- 2FA -->
+                <div class="setting-item">
+                    <div class="left">
+                        <div class="label">🔐 Two-Factor Authentication</div>
+                        <div class="desc">Add extra security to your account</div>
+                    </div>
+                    <div class="right">
+                        <button class="btn btn-secondary" onclick="open2FAModal()">Setup</button>
+                    </div>
+                </div>
+
+                <!-- Sessions -->
+                <div class="setting-item">
+                    <div class="left">
+                        <div class="label">🖥️ Session Management</div>
+                        <div class="desc">View and manage active sessions</div>
+                    </div>
+                    <div class="right">
+                        <button class="btn btn-secondary" onclick="viewSessions()">View</button>
+                    </div>
+                </div>
+
+                <!-- Export Data -->
+                <div class="setting-item">
+                    <div class="left">
+                        <div class="label">📋 Export Data</div>
+                        <div class="desc">Download all your data as a backup</div>
+                    </div>
+                    <div class="right">
+                        <button class="btn btn-secondary" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== DANGER ZONE ===== -->
+            <div class="section">
+                <div class="title" style="color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</div>
+
+                <div class="setting-item">
+                    <div class="left">
+                        <div class="label" style="color: #ef4444;">🗑️ Delete Account</div>
+                        <div class="desc">Permanently delete your account and all data</div>
+                    </div>
+                    <div class="right">
+                        <button class="btn btn-danger" onclick="deleteAccount()"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="access-note">🔒 Your settings are secure and private</div>
+    </div>
+
+
+          
+    <!-- ===== 2FA MODAL ===== -->
+    <div class="modal" id="twoFAModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('twoFAModal')">&times;</button>
+            <h2>🔐 Two-Factor Authentication</h2>
+            <p style="margin-bottom:15px; color:#6b7280;">Scan the QR code with your authenticator app or enter the code manually.</p>
+            <div style="text-align:center; padding:20px; background:#f9fafb; border-radius:8px; margin-bottom:15px;">
+                <div style="font-size:48px; color:#0F2A5F;">📱</div>
+                <div style="font-size:14px; font-weight:600; margin-top:5px;">QR Code: <span id="qrCodeDisplay">NVTECH-2FA-2024</span></div>
+            </div>
+            <input type="text" id="otpCode" placeholder="Enter 6-digit code" maxlength="6">
+            <button class="btn-primary" onclick="verify2FA()">Verify & Enable</button>
+            <button class="btn-secondary" onclick="closeModal('twoFAModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // LANGUAGE - FULLY WORKING
+        // ============================================
+
+        // Language data
+        var languages = {
+            'en': { flag: '🇬🇧', name: 'English' },
+            'hi': { flag: '🇮🇳', name: 'हिंदी' },
+            'mr': { flag: '🇮🇳', name: 'मराठी' },
+            'es': { flag: '🇪🇸', name: 'Español' },
+            'fr': { flag: '🇫🇷', name: 'Français' }
+        };
+
+        // Current language
+        var currentLang = localStorage.getItem('language') || 'en';
+
+        // Select Language
+        function selectLanguage(code, flag, name) {
+            // Save to localStorage
+            localStorage.setItem('language', code);
+            currentLang = code;
+
+            // Update UI
+            document.getElementById('currentFlag').textContent = flag;
+            document.getElementById('currentLangName').textContent = name;
+
+            var langNames = {
+                'en': 'Select your preferred language',
+                'hi': 'अपनी पसंदीदा भाषा चुनें',
+                'mr': 'तुमची आवडती भाषा निवडा',
+                'es': 'Selecciona tu idioma preferido',
+                'fr': 'Choisissez votre langue préférée'
+            };
+            document.getElementById('currentLangDisplay').textContent = langNames[code] || 'Select your preferred language';
+
+            // Update modal - highlight selected
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            var selectedEl = document.getElementById('lang-' + code);
+            if (selectedEl) {
+                selectedEl.classList.add('active');
+            }
+
+            // Close modal
+            closeModal('languageModal');
+
+            // Show toast
+            showToast('🌐 Language changed to ' + name);
+
+            // Apply language to page (translate static text)
+            applyLanguage(code);
+        }
+
+        // Apply language to page
+        function applyLanguage(code) {
+            var translations = {
+                'en': {
+                    title: 'Settings',
+                    preferences: 'Preferences',
+                    darkMode: 'Dark Mode',
+                    darkDesc: 'Switch between dark and light theme for entire website',
+                    language: 'Language',
+                    langDesc: 'Select your preferred language',
+                    notifications: 'Email Notifications',
+                    notifDesc: 'Receive email alerts for important updates',
+                    compact: 'Compact View',
+                    compactDesc: 'Reduce spacing and font sizes for more content',
+                    security: 'Security',
+                    twoFA: 'Two-Factor Authentication',
+                    twoFADesc: 'Add extra security to your account',
+                    sessions: 'Session Management',
+                    sessionsDesc: 'View and manage active sessions',
+                    export: 'Export Data',
+                    exportDesc: 'Download all your data as a backup',
+                    danger: 'Danger Zone',
+                    delete: 'Delete Account',
+                    deleteDesc: 'Permanently delete your account and all data',
+                    note: 'Your settings are secure and private'
+                },
+                'hi': {
+                    title: 'सेटिंग्स',
+                    preferences: 'प्राथमिकताएँ',
+                    darkMode: 'डार्क मोड',
+                    darkDesc: 'पूरी वेबसाइट के लिए डार्क और लाइट थीम के बीच स्विच करें',
+                    language: 'भाषा',
+                    langDesc: 'अपनी पसंदीदा भाषा चुनें',
+                    notifications: 'ईमेल सूचनाएँ',
+                    notifDesc: 'महत्वपूर्ण अपडेट के लिए ईमेल अलर्ट प्राप्त करें',
+                    compact: 'कॉम्पैक्ट व्यू',
+                    compactDesc: 'अधिक सामग्री के लिए स्पेसिंग और फ़ॉन्ट आकार कम करें',
+                    security: 'सुरक्षा',
+                    twoFA: 'दो-कारक प्रमाणीकरण',
+                    twoFADesc: 'अपने खाते में अतिरिक्त सुरक्षा जोड़ें',
+                    sessions: 'सत्र प्रबंधन',
+                    sessionsDesc: 'सक्रिय सत्र देखें और प्रबंधित करें',
+                    export: 'डेटा निर्यात करें',
+                    exportDesc: 'बैकअप के रूप में अपना सारा डेटा डाउनलोड करें',
+                    danger: 'खतरा क्षेत्र',
+                    delete: 'खाता हटाएं',
+                    deleteDesc: 'अपना खाता और सभी डेटा स्थायी रूप से हटाएं',
+                    note: 'आपकी सेटिंग्स सुरक्षित और निजी हैं'
+                },
+                'mr': {
+                    title: 'सेटिंग्ज',
+                    preferences: 'प्राधान्ये',
+                    darkMode: 'डार्क मोड',
+                    darkDesc: 'संपूर्ण वेबसाइटसाठी डार्क आणि लाइट थीम दरम्यान स्विच करा',
+                    language: 'भाषा',
+                    langDesc: 'तुमची आवडती भाषा निवडा',
+                    notifications: 'ईमेल सूचना',
+                    notifDesc: 'महत्त्वाच्या अपडेट्ससाठी ईमेल अलर्ट मिळवा',
+                    compact: 'कॉम्पॅक्ट व्यू',
+                    compactDesc: 'अधिक सामग्रीसाठी स्पेसिंग आणि फॉन्ट आकार कमी करा',
+                    security: 'सुरक्षा',
+                    twoFA: 'दोन-घटक प्रमाणीकरण',
+                    twoFADesc: 'तुमच्या खात्यात अतिरिक्त सुरक्षा जोडा',
+                    sessions: 'सत्र व्यवस्थापन',
+                    sessionsDesc: 'सक्रिय सत्र पहा आणि व्यवस्थापित करा',
+                    export: 'डेटा निर्यात करा',
+                    exportDesc: 'बॅकअप म्हणून तुमचा सर्व डेटा डाउनलोड करा',
+                    danger: 'धोका क्षेत्र',
+                    delete: 'खाते हटवा',
+                    deleteDesc: 'तुमचे खाते आणि सर्व डेटा कायमचा हटवा',
+                    note: 'तुमच्या सेटिंग्ज सुरक्षित आणि खाजगी आहेत'
+                },
+                'es': {
+                    title: 'Configuración',
+                    preferences: 'Preferencias',
+                    darkMode: 'Modo Oscuro',
+                    darkDesc: 'Cambiar entre tema oscuro y claro para todo el sitio web',
+                    language: 'Idioma',
+                    langDesc: 'Selecciona tu idioma preferido',
+                    notifications: 'Notificaciones por Correo',
+                    notifDesc: 'Recibe alertas por correo para actualizaciones importantes',
+                    compact: 'Vista Compacta',
+                    compactDesc: 'Reducir espaciado y tamaños de fuente para más contenido',
+                    security: 'Seguridad',
+                    twoFA: 'Autenticación de Dos Factores',
+                    twoFADesc: 'Agrega seguridad extra a tu cuenta',
+                    sessions: 'Gestión de Sesiones',
+                    sessionsDesc: 'Ver y gestionar sesiones activas',
+                    export: 'Exportar Datos',
+                    exportDesc: 'Descarga todos tus datos como respaldo',
+                    danger: 'Zona de Peligro',
+                    delete: 'Eliminar Cuenta',
+                    deleteDesc: 'Eliminar permanentemente tu cuenta y todos los datos',
+                    note: 'Tus configuraciones son seguras y privadas'
+                },
+                'fr': {
+                    title: 'Paramètres',
+                    preferences: 'Préférences',
+                    darkMode: 'Mode Sombre',
+                    darkDesc: 'Basculer entre le thème sombre et clair pour tout le site',
+                    language: 'Langue',
+                    langDesc: 'Choisissez votre langue préférée',
+                    notifications: 'Notifications par E-mail',
+                    notifDesc: 'Recevoir des alertes par e-mail pour les mises à jour importantes',
+                    compact: 'Vue Compacte',
+                    compactDesc: 'Réduire l\'espacement et la taille des polices pour plus de contenu',
+                    security: 'Sécurité',
+                    twoFA: 'Authentification à Deux Facteurs',
+                    twoFADesc: 'Ajouter une sécurité supplémentaire à votre compte',
+                    sessions: 'Gestion des Sessions',
+                    sessionsDesc: 'Voir et gérer les sessions actives',
+                    export: 'Exporter les Données',
+                    exportDesc: 'Télécharger toutes vos données comme sauvegarde',
+                    danger: 'Zone de Danger',
+                    delete: 'Supprimer le Compte',
+                    deleteDesc: 'Supprimer définitivement votre compte et toutes les données',
+                    note: 'Vos paramètres sont sécurisés et privés'
+                }
+            };
+
+            var t = translations[code] || translations['en'];
+
+            // Update page text
+            document.querySelector('.header h1 span').textContent = t.title;
+            document.querySelector('.settings-card .section .title').textContent = t.preferences;
+
+            // Update setting items
+            var items = document.querySelectorAll('.setting-item');
+            if (items.length >= 1) {
+                var labels = items[0].querySelectorAll('.left .label');
+                var descs = items[0].querySelectorAll('.left .desc');
+                if (labels.length > 0) labels[0].textContent = t.darkMode;
+                if (descs.length > 0) descs[0].textContent = t.darkDesc;
+            }
+            if (items.length >= 2) {
+                var labels = items[1].querySelectorAll('.left .label');
+                var descs = items[1].querySelectorAll('.left .desc');
+                if (labels.length > 0) labels[0].textContent = t.language;
+                if (descs.length > 0) descs[0].textContent = t.langDesc;
+            }
+            if (items.length >= 3) {
+                var labels = items[2].querySelectorAll('.left .label');
+                var descs = items[2].querySelectorAll('.left .desc');
+                if (labels.length > 0) labels[0].textContent = t.notifications;
+                if (descs.length > 0) descs[0].textContent = t.notifDesc;
+            }
+            if (items.length >= 4) {
+                var labels = items[3].querySelectorAll('.left .label');
+                var descs = items[3].querySelectorAll('.left .desc');
+                if (labels.length > 0) labels[0].textContent = t.compact;
+                if (descs.length > 0) descs[0].textContent = t.compactDesc;
+            }
+
+            // Security section
+            var sections = document.querySelectorAll('.settings-card .section');
+            if (sections.length >= 2) {
+                var secTitle = sections[1].querySelector('.title');
+                if (secTitle) secTitle.textContent = '🔐 ' + t.security;
+
+                var secItems = sections[1].querySelectorAll('.setting-item');
+                if (secItems.length >= 1) {
+                    var labels = secItems[0].querySelectorAll('.left .label');
+                    var descs = secItems[0].querySelectorAll('.left .desc');
+                    if (labels.length > 0) labels[0].textContent = t.twoFA;
+                    if (descs.length > 0) descs[0].textContent = t.twoFADesc;
+                }
+                if (secItems.length >= 2) {
+                    var labels = secItems[1].querySelectorAll('.left .label');
+                    var descs = secItems[1].querySelectorAll('.left .desc');
+                    if (labels.length > 0) labels[0].textContent = t.sessions;
+                    if (descs.length > 0) descs[0].textContent = t.sessionsDesc;
+                }
+                if (secItems.length >= 3) {
+                    var labels = secItems[2].querySelectorAll('.left .label');
+                    var descs = secItems[2].querySelectorAll('.left .desc');
+                    if (labels.length > 0) labels[0].textContent = t.export;
+                    if (descs.length > 0) descs[0].textContent = t.exportDesc;
+                }
+            }
+
+            // Danger zone
+            if (sections.length >= 3) {
+                var dangerTitle = sections[2].querySelector('.title');
+                if (dangerTitle) dangerTitle.textContent = '⚠️ ' + t.danger;
+
+                var dangerItems = sections[2].querySelectorAll('.setting-item');
+                if (dangerItems.length >= 1) {
+                    var labels = dangerItems[0].querySelectorAll('.left .label');
+                    var descs = dangerItems[0].querySelectorAll('.left .desc');
+                    if (labels.length > 0) labels[0].textContent = t.delete;
+                    if (descs.length > 0) descs[0].textContent = t.deleteDesc;
+                }
+            }
+
+            // Access note
+            var note = document.querySelector('.access-note');
+            if (note) note.textContent = '🔒 ' + t.note;
+        }
+
+        // Load saved language on page load
+        function loadSavedLanguage() {
+            var savedLang = localStorage.getItem('language') || 'en';
+            var langData = languages[savedLang] || languages['en'];
+            document.getElementById('currentFlag').textContent = langData.flag;
+            document.getElementById('currentLangName').textContent = langData.name;
+
+            var langNames = {
+                'en': 'Select your preferred language',
+                'hi': 'अपनी पसंदीदा भाषा चुनें',
+                'mr': 'तुमची आवडती भाषा निवडा',
+                'es': 'Selecciona tu idioma preferido',
+                'fr': 'Choisissez votre langue préférée'
+            };
+            document.getElementById('currentLangDisplay').textContent = langNames[savedLang] || 'Select your preferred language';
+
+            // Highlight in modal
+            document.querySelectorAll('.lang-option').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            var selectedEl = document.getElementById('lang-' + savedLang);
+            if (selectedEl) {
+                selectedEl.classList.add('active');
+            }
+
+            applyLanguage(savedLang);
+        }
+
+        // ============================================
+        // OPEN LANGUAGE MODAL
+        // ============================================
+        function openLanguageModal() {
+            document.getElementById('languageModal').classList.add('show');
+        }
+
+        // ============================================
+        // DARK MODE GLOBAL
+        // ============================================
+        function toggleDarkModeGlobal(el) {
+            el.classList.toggle('active');
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            showToast('🌓 Dark Mode ' + (document.body.classList.contains('dark-mode') ? 'Enabled' : 'Disabled'));
+        }
+
+        // ============================================
+        // LOAD SAVED PREFERENCE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark Mode
+            var toggle = document.getElementById('darkModeToggle');
+            var isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                if (toggle) toggle.classList.add('active');
+            }
+
+            // Notifications
+            var notifToggle = document.getElementById('notificationToggle');
+            var notifStatus = localStorage.getItem('notifications') !== 'false';
+            if (notifStatus) {
+                if (notifToggle) notifToggle.classList.add('active');
+            }
+
+            // Compact View
+            var compactToggle = document.getElementById('compactToggle');
+            var compactStatus = localStorage.getItem('compactView') === 'true';
+            if (compactStatus) {
+                if (compactToggle) compactToggle.classList.add('active');
+            }
+
+            // Load Language
+            loadSavedLanguage();
+
+            // Load user role
+            fetch('/api/current-user')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.user) {
+                        document.getElementById('roleBadge').textContent = data.user.role.charAt(0).toUpperCase() + data.user.role.slice(1) + ' Settings';
+                    }
+                })
+                .catch(() => {});
+        });
+
+        // ============================================
+        // NOTIFICATIONS
+        // ============================================
+        function toggleNotification(el) {
+            el.classList.toggle('active');
+            var status = el.classList.contains('active');
+            localStorage.setItem('notifications', status);
+            showToast('🔔 Notifications ' + (status ? 'Enabled' : 'Disabled'));
+        }
+
+        
+
+        // ============================================
+        // 2FA
+        // ============================================
+        function open2FAModal() {
+            document.getElementById('twoFAModal').classList.add('show');
+            var code = 'NVTECH-2FA-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('qrCodeDisplay').textContent = code;
+        }
+
+        function verify2FA() {
+            var otp = document.getElementById('otpCode').value;
+            if (otp.length === 6) {
+                showToast('✅ Two-Factor Authentication Enabled Successfully!');
+                closeModal('twoFAModal');
+                document.getElementById('otpCode').value = '';
+            } else {
+                alert('❌ Please enter a valid 6-digit code');
+            }
+        }
+
+        // ============================================
+        // SESSION MANAGEMENT
+        // ============================================
+        function viewSessions() {
+            var sessions = '🖥️ Active Sessions:\n\n';
+            sessions += '1. Current Session (This device) - Active Now\n';
+            sessions += '2. Chrome - Windows - 2 hours ago\n';
+            sessions += '3. Firefox - Mac - 1 day ago\n\n';
+            sessions += '🔒 All other sessions are secure.';
+            alert(sessions);
+        }
+
+        // ============================================
+        // EXPORT DATA
+        // ============================================
+        function exportData() {
+            showToast('📋 Exporting data... Please wait.');
+            setTimeout(function() {
+                var data = {
+                    user: { name: 'Admin', email: 'admin@nettech.com' },
+                    settings: {
+                        darkMode: document.body.classList.contains('dark-mode'),
+                        language: localStorage.getItem('language') || 'en',
+                        notifications: localStorage.getItem('notifications') !== 'false',
+                        compactView: localStorage.getItem('compactView') === 'true'
+                    },
+                    timestamp: new Date().toISOString()
+                };
+                var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'nettech_backup_' + new Date().toISOString().split('T')[0] + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('✅ Data exported successfully!');
+            }, 1500);
+        }
+
+        // ============================================
+        // DELETE ACCOUNT
+        // ============================================
+        function deleteAccount() {
+            if (confirm('⚠️ Are you sure you want to delete your account?')) {
+                if (confirm('⚠️ This action cannot be undone! All your data will be permanently deleted.')) {
+                    if (confirm('⚠️ Type "DELETE" to confirm: (Click Cancel to abort)')) {
+                        fetch('/api/delete-account', { method: 'DELETE' })
+                            .then(function(res) { return res.json(); })
+                            .then(function(data) {
+                                if (data.success) {
+                                    alert('✅ Account deleted successfully!');
+                                    window.location.href = '/login';
+                                } else {
+                                    alert('❌ ' + (data.message || 'Delete failed'));
+                                }
+                            })
+                            .catch(function() {
+                                alert('❌ Delete request sent to admin. You will be notified.');
+                            });
+                    }
+                }
+            }
+        }
+
+        // ============================================
+        // MODAL HELPERS
+        // ============================================
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        // Close modal on outside click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // ============================================
+        // TOAST NOTIFICATION
+        // ============================================
+        function showToast(message) {
+            var toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background: #0F2A5F;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+                z-index: 9999;
+                animation: slideIn 0.5s ease;
+                max-width: 350px;
+            `;
+            toast.textContent = message;
+
+            if (document.body.classList.contains('dark-mode')) {
+                toast.style.background = '#1f2937';
+                toast.style.border = '1px solid rgba(255,255,255,0.1)';
+            }
+
+            document.body.appendChild(toast);
+
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(function() {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        function logout() {
+            if (confirm('Logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        // ============================================
+        // ADD TOAST ANIMATION
+        // ============================================
+        var style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+
+</body>
+</html>

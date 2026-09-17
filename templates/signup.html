@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up - StockNova Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {    
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+        }
+        .logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding: 14px 46px 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+        }
+        .password-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .password-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        .toggle-password:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error {
+            background: rgba(245, 87, 108, 0.1);
+            border: 1px solid rgba(245, 87, 108, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            color: #f5576c;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
+        .success {
+            background: rgba(46, 213, 115, 0.1);
+            border: 1px solid rgba(46, 213, 115, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            color: #2ed573;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            color: rgba(255, 255, 255, 0.3);
+            text-decoration: none;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            color: white;
+        }
+        .password-hint {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back</a>
+        <div class="logo">📦</div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Sign up as a staff member</p>
+
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Min 6 characters" required minlength="6">
+                    <span class="toggle-password" onclick="togglePassword('password', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+                <div class="password-hint">Password must be at least 6 characters</div>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                    <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" id="signupBtn">Create Account</button>
+        </form>
+
+        <div class="footer">
+            Already have an account? <a href="/login">Login</a>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // TOGGLE PASSWORD VISIBILITY
+        // ============================================
+        function togglePassword(inputId, element) {
+            var input = document.getElementById(inputId);
+            var icon = element.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // ============================================
+        // SIGNUP FORM
+        // ============================================
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+            const signupBtn = document.getElementById('signupBtn');
+
+            // Reset messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            // Validation
+            if (!fullName || !username || !email || !password) {
+                errorDiv.textContent = '❌ All fields are required';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = '❌ Password must be at least 6 characters';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = '❌ Passwords do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Disable button
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating account...';
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: fullName,
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    successDiv.textContent = '✅ Account created successfully! Redirecting to login...';
+                    successDiv.style.display = 'block';
+                    document.getElementById('signupForm').reset();
+                    
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    errorDiv.textContent = '❌ ' + (data.message || 'Registration failed');
+                    errorDiv.style.display = 'block';
+                    signupBtn.disabled = false;
+                    signupBtn.textContent = 'Create Account';
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ Network error. Please try again.';
+                errorDiv.style.display = 'block';
+                signupBtn.disabled = false;
+                signupBtn.textContent = 'Create Account';
+            }
+        });
+
+        // ============================================
+        // ENTER KEY SUPPORT
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('signupForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

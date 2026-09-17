@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Suppliers - StockNova Inventory (Staff)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: #0F2A5F;
+            padding: 28px 18px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #FFFFFF;
+            padding: 0 8px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logo span { color: #FFFFFF; opacity: 0.7; }
+        .sidebar .logo i { font-size: 26px; color: #FFFFFF; }
+        .sidebar .menu-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.35);
+            padding: 24px 12px 8px;
+            font-weight: 600;
+        }
+        .sidebar .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 16px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            margin: 2px 0;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .sidebar .menu-item i { width: 20px; font-size: 16px; text-align: center; }
+        .sidebar .menu-item:hover { background: rgba(255,255,255,0.08); color: #FFFFFF; }
+        .sidebar .menu-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .sidebar .logout-btn {
+            margin-top: auto;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            background: transparent;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .logout-btn:hover { background: rgba(255,255,255,0.08); }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; padding: 20px 14px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 2px solid #0F2A5F; padding: 16px; }
+            .sidebar .menu-item { display: inline-block; padding: 8px 12px; font-size: 12px; }
+            .sidebar .menu-label { display: none; }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 260px;
+            padding: 28px 36px;
+            flex: 1;
+            background: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .header h1 span {
+            color: #0F2A5F;
+        }
+        .header .staff-badge {
+            background: rgba(16,185,129,0.10);
+            color: #10b981;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .header a {
+            color: #0F2A5F;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .header a:hover { background: #f3f4f6; }
+
+        table {
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 12px;
+            overflow: hidden;
+            border-collapse: collapse;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        th {
+            padding: 14px 16px;
+            text-align: left;
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid #f3f4f6;
+            color: #1a1a2e;
+        }
+        tr:hover td {
+            background: #f9fafb;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+        .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.toolbar input {
+    flex: 1;
+    padding: 12px 16px;
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: #1a1a2e;
+    font-size: 15px;
+    min-width: 200px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.toolbar input:focus {
+    outline: none;
+    border-color: #0F2A5F;
+    box-shadow: 0 0 0 3px rgba(15,42,95,0.08);
+}
+.toolbar input::placeholder {
+    color: #9ca3af;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    font-family: 'Inter', sans-serif;
+}
+.btn-primary {
+    background: #0F2A5F;
+    color: #FFFFFF;
+}
+.btn-primary:hover {
+    background: #1a3a7a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15,42,95,0.25);
+}
+.btn-warning {
+    background: #f59e0b;
+    color: #FFFFFF;
+}
+.btn-warning:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+}
+
+        /* ===== STAFF NOTICE ===== */
+        .staff-notice {
+            background: rgba(16,185,129,0.06);
+            border: 1px solid rgba(16,185,129,0.15);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 15px;
+            color: #10b981;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .staff-notice i {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 200px;
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        @media (max-width: 480px) {
+            .main {
+                margin-left: 0;
+                padding: 16px;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        /* ===== DARK MODE ===== */
+        body.dark-mode {
+            background: #0a0e1a;
+            color: #e2e8f0;
+        }
+        body.dark-mode .main {
+            background: #0a0e1a;
+        }
+        body.dark-mode .header h1 {
+            color: #fff;
+        }
+        body.dark-mode .header h1 span {
+            color: #667eea;
+        }
+        body.dark-mode .header a {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        body.dark-mode .header a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        body.dark-mode table {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode th {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.4);
+        }
+        body.dark-mode td {
+            color: rgba(255,255,255,0.8);
+            border-color: rgba(255,255,255,0.06);
+        }
+        body.dark-mode tr:hover td {
+            background: rgba(255,255,255,0.05);
+        }
+        body.dark-mode .empty {
+            color: rgba(255,255,255,0.3);
+        }
+        body.dark-mode .header .staff-badge {
+            background: rgba(16,185,129,0.15);
+            color: #2ed573;
+        }
+        body.dark-mode .staff-notice {
+            background: rgba(16,185,129,0.08);
+            border-color: rgba(16,185,129,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    {% include 'staff_sidebar.html' %}
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main">
+
+        <div class="header">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <h1>🏢 <span>Suppliers</span></h1>
+                <span class="staff-badge"><i class="fas fa-user-check"></i> Staff Access</span>
+            </div>
+            <a href="/dashboard"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+
+<!-- ===== TOOLBAR ===== -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="🔍 Search suppliers by name or contact..." />
+            <button class="btn btn-primary" onclick="searchSuppliers()"><i class="fas fa-search"></i> Search</button>
+            <button class="btn btn-warning" onclick="refreshSuppliers()"><i class="fas fa-sync"></i> Reset</button>
+        </div>
+
+        <table>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Contact Person</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody id="supplierTable">
+                <tr><td colspan="5" class="empty">⏳ Loading...</td></tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+        // ============================================
+        // LOAD SUPPLIERS
+        // ============================================
+        async function loadSuppliers() {
+            try {
+                const response = await fetch('/api/suppliers');
+                const suppliers = await response.json();
+                displaySuppliers(suppliers);
+            } catch (error) {
+                console.error('Error loading suppliers:', error);
+                document.getElementById('supplierTable').innerHTML = '<tr><td colspan="5" class="empty">❌ Error loading suppliers</td></tr>';
+            }
+        }
+
+        function displaySuppliers(suppliers) {
+            const tbody = document.getElementById('supplierTable');
+            if (!suppliers || suppliers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty">🏢 No suppliers found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = suppliers.map(s => `
+                <tr>
+                    <td>#${s.id}</td>
+                    <td><strong>${escapeHtml(s.name)}</strong></td>
+                    <td>${escapeHtml(s.contact_person || '-')}</td>
+                    <td>${escapeHtml(s.email || '-')}</td>
+                    <td>${escapeHtml(s.phone || '-')}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================
+        // HELPER
+        // ============================================
+        function escapeHtml(text) {
+            if (!text) return '-';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // LOGOUT
+        // ============================================
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/api/logout', { method: 'POST' })
+                    .then(function() { window.location.href = '/login'; })
+                    .catch(function() { window.location.href = '/login'; });
+            }
+        }
+
+        // ============================================
+        // HIGHLIGHT ACTIVE MENU
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar .menu-item').forEach(function(item) {
+                var href = item.getAttribute('href');
+                if (href && currentPath.includes(href)) {
+                    item.classList.add('active');
+                }
+                if (currentPath === '/dashboard' && href === '/dashboard') {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+         // ============================================
+        // SEARCH SUPPLIERS
+        // ============================================
+        async function searchSuppliers() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { 
+                loadSuppliers(); 
+                return; 
+            }
+            try {
+                const response = await fetch(`/api/suppliers/search?q=${encodeURIComponent(query)}`);
+                const suppliers = await response.json();
+                displaySuppliers(suppliers);
+            } catch (error) {
+                alert('❌ Search failed');
+            }
+        }
+
+        // =============
+          // ============================================
+        // REFRESH / RESET
+        // ============================================
+        function refreshSuppliers() {
+            document.getElementById('searchInput').value = '';
+            loadSuppliers();
+        }
+
+        // ============================================
+        // ENTER KEY SUPPORT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchSuppliers();
+                }
+            });
+        });
+
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            var isDark = localStorage.getItem('darkMode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // ============================================
+        // LOAD SUPPLIERS ON PAGE LOAD
+        // ============================================
+        document.addEventListener('DOMContentLoaded', loadSuppliers);
+    </script>
+
+</body>
+</html>
