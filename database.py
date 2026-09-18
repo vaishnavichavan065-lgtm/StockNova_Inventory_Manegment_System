@@ -16,22 +16,20 @@ class Database:
         if self._initialized:
             return
         self._initialized = True
-        
-        # 🔴 तुमचा MySQL password इथे बदला!
+
         self.db_config = {
-            'host': 'localhost',
-            'database': 'nettech_db',
-            'user': 'root',
-            'password': 'admin@1234',  # ← तुमचा password बदला!
-            'pool_name': 'mypool',
-            'pool_size': 10,
-            'pool_reset_session': True,
-            'connect_timeout': 60,
-            'autocommit': True
-        }
-        self.pool = None
-        self.connection = None
-        self.cursor = None
+        "host": "tramway.proxy.rlwy.net",
+        "port": 35363,
+        "user": "root",
+        "password": "PQbzdIHHrAwoEtKeMJfVycWqdgQktlhe",
+        "database": "railway"
+}
+
+        self.pool = mysql.connector.pooling.MySQLConnectionPool(
+        pool_name="mypool",
+        pool_size=5,
+        **self.db_config
+)
         
         try:
             self.pool = mysql.connector.pooling.MySQLConnectionPool(**self.db_config)
