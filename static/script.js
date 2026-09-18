@@ -1,6 +1,3 @@
-// ============================================
-// NETTECH INVENTORY - MAIN JAVASCRIPT FILE
-// ============================================
 
 console.log('🚀 Script loaded successfully!');
 

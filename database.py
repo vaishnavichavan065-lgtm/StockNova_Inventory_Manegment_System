@@ -24,18 +24,19 @@ class Database:
         "password": "PQbzdIHHrAwoEtKeMJfVycWqdgQktlhe",
         "database": "railway"
 }
+        self.pool = None
+        self.connection = None
+        self.cursor = None
 
-        self.pool = mysql.connector.pooling.MySQLConnectionPool(
-        pool_name="mypool",
-        pool_size=5,
-        **self.db_config
-)
         
         try:
-            self.pool = mysql.connector.pooling.MySQLConnectionPool(**self.db_config)
-            print("✅ Connection Pool created! (size: 10)")
-        except Exception as e:
-            print(f"❌ Pool creation failed: {e}")
+            self.pool = mysql.connector.pooling.MySQLConnectionPool(
+            pool_name="mypool",
+            pool_size=5,
+            **self.db_config
+)
+        except Error as e:
+            print(f"❌ Pool creation error: {e}")
             self.pool = None
     
     def get_connection(self):
